@@ -7,7 +7,7 @@ import 'package:covidtrace/info_card.dart';
 import 'package:covidtrace/helper/metrics.dart' as metrics;
 import 'package:covidtrace/privacy_policy.dart';
 import 'package:covidtrace/storage/exposure.dart';
-import 'package:covidtrace/test_facilities.dart';
+import 'package:flutter/foundation.dart';
 import 'package:gact_plugin/gact_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -374,6 +374,7 @@ class DashboardState extends State with TickerProviderStateMixin {
                   ),
                 ),
               ),
+            * Flutter rendering issue.
             SizedBox(height: 20),
             Card(
               margin: EdgeInsets.zero,

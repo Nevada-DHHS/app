@@ -127,62 +127,141 @@ class OnboardingState extends State {
         value: theme['system_overlay'] == 'light'
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark,
-        child: Theme(
-          data: themeData,
-          child: Container(
-            color: Color(int.parse(theme['background'])),
-            child: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.all(30),
-                child: PageView(
-                    controller: _pageController,
-                    physics: NeverScrollableScrollPhysics(),
-                    children: [
-                      Stack(overflow: Overflow.visible, children: [
-                        SingleChildScrollView(
-                            physics: AlwaysScrollableScrollPhysics(),
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      child: Image.asset(
-                                        config['intro']['icon'],
-                                        fit: BoxFit.contain,
-                                        height: deviceHeight * .45,
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+          child: Theme(
+            data: themeData,
+            child: Container(
+              color: Color(int.parse(theme['background'])),
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: PageView(
+                      controller: _pageController,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        Stack(overflow: Overflow.visible, children: [
+                          SingleChildScrollView(
+                              physics: AlwaysScrollableScrollPhysics(),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        child: Image.asset(
+                                          config['intro']['icon'],
+                                          fit: BoxFit.contain,
+                                          height: deviceHeight * .45,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Row(children: [
-                                    Expanded(
-                                        child: Text(
-                                      intl.get(config['intro']['title']),
-                                      style: themeData.textTheme.headline5,
-                                    )),
-                                  ]),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    intl.get(config['intro']['body']),
-                                    style: bodyText,
-                                  ),
-                                ])),
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: BlockButton(
-                              onPressed: nextPage,
-                              label: intl.get(config['intro']['cta'])),
+                                    SizedBox(height: 10),
+                                    Row(children: [
+                                      Expanded(
+                                          child: Text(
+                                        intl.get(config['intro']['title']),
+                                        style: themeData.textTheme.headline5,
+                                      )),
+                                    ]),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      intl.get(config['intro']['body']),
+                                      style: bodyText,
+                                    ),
+                                  ])),
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: BlockButton(
+                                onPressed: nextPage,
+                                label: intl.get(config['intro']['cta'])),
+                          ),
+                        ]),
+                        Stack(
+                          overflow: Overflow.visible,
+                          children: [
+                            SingleChildScrollView(
+                              physics: AlwaysScrollableScrollPhysics(),
+                              child: Container(
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(children: [
+                                        Expanded(
+                                            child: Text(
+                                                intl.get(
+                                                    config['privacy']['title']),
+                                                style: themeData
+                                                    .textTheme.headline5)),
+                                        Container(
+                                          child: Image.asset(
+                                              config['privacy']['icon'],
+                                              color: textColor,
+                                              height: 40,
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ]),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        intl.get(config['privacy']['body']),
+                                        style: bodyText,
+                                      ),
+                                      SizedBox(height: 10),
+                                      ...config['privacy']['bullets'].map((b) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: Row(children: [
+                                            Image.asset(
+                                              b['icon'],
+                                              color: textColor,
+                                              height: 25,
+                                            ),
+                                            SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                intl.get(b['title']),
+                                                style: bodyText,
+                                              ),
+                                            ),
+                                          ]),
+                                        );
+                                      }),
+                                      SizedBox(height: 10),
+                                      Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () => showPrivacyPolicy(),
+                                          child: Text(
+                                            intl.get(config['privacy']
+                                                ['privacy_title']),
+                                            style: bodyText.merge(TextStyle(
+                                                decoration:
+                                                    TextDecoration.underline)),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 30),
+                                    ]),
+                              ),
+                            ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: BlockButton(
+                                  onPressed: nextPage,
+                                  label: intl.get(config['privacy']['cta'])),
+                            ),
+                          ],
                         ),
-                      ]),
-                      Stack(
-                        overflow: Overflow.visible,
-                        children: [
+                        Stack(overflow: Overflow.visible, children: [
                           SingleChildScrollView(
-                            physics: AlwaysScrollableScrollPhysics(),
-                            child: Container(
+                              physics: AlwaysScrollableScrollPhysics(),
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,206 +269,132 @@ class OnboardingState extends State {
                                     Row(children: [
                                       Expanded(
                                           child: Text(
-                                              intl.get(
-                                                  config['privacy']['title']),
+                                              intl.get(config[
+                                                      'exposure_notification']
+                                                  ['title']),
                                               style: themeData
                                                   .textTheme.headline5)),
                                       Container(
                                         child: Image.asset(
-                                            config['privacy']['icon'],
+                                            config['exposure_notification']
+                                                ['icon'],
                                             color: textColor,
                                             height: 40,
                                             fit: BoxFit.contain),
                                       ),
                                     ]),
-                                    SizedBox(height: 10),
+                                    SizedBox(height: 20),
                                     Text(
-                                      intl.get(config['privacy']['body']),
+                                      intl.get(config['exposure_notification']
+                                          ['body']),
                                       style: bodyText,
                                     ),
-                                    SizedBox(height: 10),
-                                    ...config['privacy']['bullets'].map((b) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 10, bottom: 10),
-                                        child: Row(children: [
-                                          Image.asset(
-                                            b['icon'],
-                                            color: textColor,
-                                            height: 25,
-                                          ),
-                                          SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              intl.get(b['title']),
-                                              style: bodyText,
-                                            ),
-                                          ),
-                                        ]),
-                                      );
-                                    }),
-                                    SizedBox(height: 10),
+                                    SizedBox(height: 20),
                                     Material(
                                       color: Colors.transparent,
                                       child: InkWell(
-                                        onTap: () => showPrivacyPolicy(),
+                                        onTap: () => launch(intl.get(
+                                            config['exposure_notification']
+                                                ['learn_more_link'])),
                                         child: Text(
-                                          intl.get(config['privacy']
-                                              ['privacy_title']),
+                                          intl.get(
+                                              config['exposure_notification']
+                                                  ['learn_more_title']),
                                           style: bodyText.merge(TextStyle(
                                               decoration:
                                                   TextDecoration.underline)),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 30),
-                                  ]),
-                            ),
-                          ),
+                                    SizedBox(height: 50),
+                                    Center(
+                                        child: Transform.scale(
+                                            scale: 1.5,
+                                            child: Material(
+                                                color: Colors.transparent,
+                                                child: Switch.adaptive(
+                                                  inactiveTrackColor:
+                                                      Colors.black26,
+                                                  activeColor: Color(int.parse(
+                                                      theme[
+                                                          'button_background'])),
+                                                  value: _requestExposure,
+                                                  onChanged: requestPermission,
+                                                )))),
+                                  ])),
+                          Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: BlockButton(
+                                  label: intl.get(
+                                      config['exposure_notification']['cta']),
+                                  onPressed:
+                                      _exposureRequested ? nextPage : null)),
+                        ]),
+                        Stack(overflow: Overflow.visible, children: [
+                          Container(
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                Text(
+                                  intl.get(config['notification_permission']
+                                      ['title']),
+                                  style: themeData.textTheme.headline5,
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  intl.get(config['notification_permission']
+                                      ['body']),
+                                  style: bodyText,
+                                ),
+                                SizedBox(height: 20),
+                                Image.asset(platform == TargetPlatform.iOS
+                                    ? config['notification_permission']
+                                        ['preview_ios']
+                                    : config['notification_permission']
+                                        ['preview_android']),
+                                SizedBox(height: 20),
+                                platform == TargetPlatform.iOS
+                                    ? Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                            onTap: () => requestNotifications(
+                                                !_requestExposure),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  child: Text(
+                                                      intl.get(config[
+                                                              'notification_permission']
+                                                          [
+                                                          'enable_toggle_title']),
+                                                      style: themeData.textTheme
+                                                          .headline6)),
+                                              Switch.adaptive(
+                                                  inactiveTrackColor:
+                                                      Colors.black26,
+                                                  activeColor: Color(int.parse(
+                                                      theme[
+                                                          'button_background'])),
+                                                  value: _requestNotification,
+                                                  onChanged:
+                                                      requestNotifications),
+                                            ])))
+                                    : Container(),
+                              ])),
                           Positioned(
                             left: 0,
                             right: 0,
                             bottom: 0,
                             child: BlockButton(
-                                onPressed: nextPage,
-                                label: intl.get(config['privacy']['cta'])),
-                          ),
-                        ],
-                      ),
-                      Stack(overflow: Overflow.visible, children: [
-                        SingleChildScrollView(
-                            physics: AlwaysScrollableScrollPhysics(),
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(children: [
-                                    Expanded(
-                                        child: Text(
-                                            intl.get(
-                                                config['exposure_notification']
-                                                    ['title']),
-                                            style:
-                                                themeData.textTheme.headline5)),
-                                    Container(
-                                      child: Image.asset(
-                                          config['exposure_notification']
-                                              ['icon'],
-                                          color: textColor,
-                                          height: 40,
-                                          fit: BoxFit.contain),
-                                    ),
-                                  ]),
-                                  SizedBox(height: 20),
-                                  Text(
-                                    intl.get(config['exposure_notification']
-                                        ['body']),
-                                    style: bodyText,
-                                  ),
-                                  SizedBox(height: 20),
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      onTap: () => launch(intl.get(
-                                          config['exposure_notification']
-                                              ['learn_more_link'])),
-                                      child: Text(
-                                        intl.get(config['exposure_notification']
-                                            ['learn_more_title']),
-                                        style: bodyText.merge(TextStyle(
-                                            decoration:
-                                                TextDecoration.underline)),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 50),
-                                  Center(
-                                      child: Transform.scale(
-                                          scale: 1.5,
-                                          child: Material(
-                                              color: Colors.transparent,
-                                              child: Switch.adaptive(
-                                                inactiveTrackColor:
-                                                    Colors.black26,
-                                                activeColor: Color(int.parse(
-                                                    theme[
-                                                        'button_background'])),
-                                                value: _requestExposure,
-                                                onChanged: requestPermission,
-                                              )))),
-                                ])),
-                        Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            child: BlockButton(
+                                onPressed: () => finish(state),
                                 label: intl.get(
-                                    config['exposure_notification']['cta']),
-                                onPressed:
-                                    _exposureRequested ? nextPage : null)),
+                                    config['notification_permission']['cta'])),
+                          ),
+                        ]),
                       ]),
-                      Stack(overflow: Overflow.visible, children: [
-                        Container(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                              Text(
-                                intl.get(
-                                    config['notification_permission']['title']),
-                                style: themeData.textTheme.headline5,
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                intl.get(
-                                    config['notification_permission']['body']),
-                                style: bodyText,
-                              ),
-                              SizedBox(height: 20),
-                              Image.asset(platform == TargetPlatform.iOS
-                                  ? config['notification_permission']
-                                      ['preview_ios']
-                                  : config['notification_permission']
-                                      ['preview_android']),
-                              SizedBox(height: 20),
-                              platform == TargetPlatform.iOS
-                                  ? Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                          onTap: () => requestNotifications(
-                                              !_requestExposure),
-                                          child: Row(children: [
-                                            Expanded(
-                                                child: Text(
-                                                    intl.get(config[
-                                                            'notification_permission']
-                                                        [
-                                                        'enable_toggle_title']),
-                                                    style: themeData
-                                                        .textTheme.headline6)),
-                                            Switch.adaptive(
-                                                inactiveTrackColor:
-                                                    Colors.black26,
-                                                activeColor: Color(int.parse(
-                                                    theme[
-                                                        'button_background'])),
-                                                value: _requestNotification,
-                                                onChanged:
-                                                    requestNotifications),
-                                          ])))
-                                  : Container(),
-                            ])),
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: BlockButton(
-                              onPressed: () => finish(state),
-                              label: intl.get(
-                                  config['notification_permission']['cta'])),
-                        ),
-                      ]),
-                    ]),
+                ),
               ),
             ),
           ),

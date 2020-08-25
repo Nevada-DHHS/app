@@ -15,6 +15,8 @@ Future<List<Uri>> processKeyIndexFile(
   String url,
   Directory dir,
 ) async {
+  print('processing export key index file $url');
+
   var indexFile = await http.get(url);
   if (indexFile.statusCode != 200) {
     return null;
@@ -37,10 +39,14 @@ Future<List<Uri>> processKeyIndexFile(
   user.lastKeyFile = exportFiles.last;
   await user.save();
 
-  var origin = Uri.parse(url).origin;
+  var parsed = Uri.parse(url);
+  var path = parsed.pathSegments;
   var keyFiles = await downloadExposureKeyFiles(
       await Future.wait(exportFiles.map((fileName) async {
-        return '$origin/$fileName';
+        // Note that export zip files are always in the same directory as the index file
+        // and that the index file has entries like so:
+        // "/exposure-key-index-dir/path-to-export-file.zip"
+        return '${parsed.origin}/${path.sublist(0, path.length - 2).join('/')}/$fileName';
       })),
       dir);
 
@@ -76,8 +82,6 @@ Future<List<Uri>> downloadExposureKeyFiles(
     var second = archive.files[1];
 
     var bin = first.name == 'export.bin' ? first : second;
-    // TODO(wes): Verify signature
-    // var sig = bin == first ? second : first;
 
     // Save bin file to disk
     var binFile = File('${file.path}.bin');
@@ -129,13 +133,19 @@ Future<ExposureInfo> checkExposures() async {
   var config = results[0] as Map<String, dynamic>;
   var dir = results[1] as Directory;
 
-  String publishedBucket = config['exposureKeysPublishedBucket'];
-  String indexFileName = config['exposureKeysPublishedIndexFile'];
+  String indexFileUrl;
 
-  var keyFiles = await processKeyIndexFile(
-          'https://$publishedBucket.storage.googleapis.com/$indexFileName',
-          dir) ??
-      [];
+  // Prefer new config value since it's more flexible in specifying a
+  // destination that isn't tied to Google Storage
+  if (config.containsKey('exposureKeysIndexUrl')) {
+    indexFileUrl = config['exposureKeysIndexUrl'];
+  } else {
+    String publishedBucket = config['exposureKeysPublishedBucket'];
+    String indexFileName = config['exposureKeysPublishedIndexFile'];
+    indexFileUrl =
+        'https://$publishedBucket.storage.googleapis.com/$indexFileName';
+  }
+  var keyFiles = await processKeyIndexFile(indexFileUrl, dir) ?? [];
 
   List<ExposureInfo> exposures = [];
   if (keyFiles.isNotEmpty) {

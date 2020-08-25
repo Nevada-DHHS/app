@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:covidtrace/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PrivacyPolicy extends StatefulWidget {
   @override
@@ -12,15 +10,12 @@ class PrivacyPolicy extends StatefulWidget {
 }
 
 class PrivacyPolicyState extends State<PrivacyPolicy> {
-  File _file;
+  String _file;
 
   void loadPolicy() async {
     String privacyLink = Intl.of(context).get('privacy_policy.content');
-    var data = await rootBundle.load(privacyLink);
-    var dir = await getApplicationDocumentsDirectory();
-    var file = File('${dir.path}/${privacyLink.split('/').last}');
 
-    await file.writeAsBytes(data.buffer.asUint8List());
+    var file = await rootBundle.loadString(privacyLink);
     setState(() {
       _file = file;
     });
@@ -38,7 +33,11 @@ class PrivacyPolicyState extends State<PrivacyPolicy> {
           title: Text(Intl.of(context).get('privacy_policy.title')),
         ),
         body: _file != null
-            ? WebView(initialUrl: _file.uri.toString())
+            ? Markdown(
+                data: _file,
+                selectable: false,
+                onTapLink: (url) => launch(url),
+              )
             : Container());
   }
 }

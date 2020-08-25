@@ -2,6 +2,7 @@
   "exposurePublishUrl": "https://exposure-5v7v5qboea-uc.a.run.app",
   "exposureKeysPublishedBucket": "exposure-notification-export-cpmxr",
   "exposureKeysPublishedIndexFile": "exposure-keys/index.txt",
+  "exposureKeysIndexUrl": "https://storage.googleapis.com/exposure-notification-export-cpmxr/exposure-keys/index.txt",
   "exposureNotificationConfiguration": {
     "minimumRiskScore": 25,
     "attenuationLevelValues": [1, 1, 8, 8, 8, 8, 8, 8],
