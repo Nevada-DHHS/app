@@ -374,6 +374,8 @@ class DashboardState extends State with TickerProviderStateMixin {
                   ),
                 ),
               ),
+            /*
+            * Remove test facility integration for the time being to get address
             * Flutter rendering issue.
             SizedBox(height: 20),
             Card(
@@ -407,6 +409,7 @@ class DashboardState extends State with TickerProviderStateMixin {
                 ),
               ),
             ),
+            */
             SizedBox(height: 10),
             ...faqs["exposure"].map((item) => InfoCard(item: item)),
             SizedBox(height: 10),
