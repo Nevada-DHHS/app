@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:covidtrace/config.dart';
 import 'package:covidtrace/intl.dart';
 import 'package:covidtrace/privacy_policy.dart';
@@ -46,6 +48,11 @@ class OnboardingState extends State {
   var _requestNotification = false;
   var _exposureRequested = false;
 
+  // This is only reachable on Android
+  void upgradeApi() {
+    launch(Config.get()['support']['gps_link']);
+  }
+
   void nextPage() => _pageController.nextPage(
       duration: Duration(milliseconds: 250), curve: Curves.easeOut);
 
@@ -55,12 +62,15 @@ class OnboardingState extends State {
       status = await GactPlugin.authorizationStatus;
       print('enable exposure notification $status');
 
-      if (status != AuthorizationStatus.Authorized) {
+      // Do not attempt to enable EN if status is unsupported
+      if (status != AuthorizationStatus.Authorized &&
+          status != AuthorizationStatus.Unsupported) {
         status = await GactPlugin.enableExposureNotification();
       }
     } catch (err) {
       print(err);
-      if (errorFromException(err) == ErrorCode.notAuthorized) {
+      var code = errorFromException(err);
+      if (code == ErrorCode.notAuthorized || code == ErrorCode.unsupported) {
         status = AuthorizationStatus.NotAuthorized;
       }
     }
@@ -140,6 +150,58 @@ class OnboardingState extends State {
                       controller: _pageController,
                       physics: NeverScrollableScrollPhysics(),
                       children: [
+                        if (state.status == AuthorizationStatus.Unsupported &&
+                            Platform.isAndroid)
+                          Stack(overflow: Overflow.visible, children: [
+                            SingleChildScrollView(
+                                physics: AlwaysScrollableScrollPhysics(),
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          child: Image.asset(
+                                            config['unsupported']['icon'],
+                                            fit: BoxFit.contain,
+                                            height: deviceHeight * .3,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Row(children: [
+                                        Expanded(
+                                            child: Text(
+                                          intl.get(
+                                              config['unsupported']['title']),
+                                          style: themeData.textTheme.headline5,
+                                        )),
+                                      ]),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        intl.get(config['unsupported']['body']),
+                                        style: bodyText,
+                                      ),
+                                    ])),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Column(children: [
+                                BlockButton(
+                                    onPressed: upgradeApi,
+                                    label:
+                                        intl.get(config['unsupported']['cta'])),
+                                FlatButton(
+                                  onPressed: nextPage,
+                                  child: Text(
+                                      intl.get(config['unsupported']['skip']),
+                                      style: bodyText),
+                                ),
+                              ]),
+                            ),
+                          ]),
                         Stack(overflow: Overflow.visible, children: [
                           SingleChildScrollView(
                               physics: AlwaysScrollableScrollPhysics(),
@@ -152,7 +214,7 @@ class OnboardingState extends State {
                                         child: Image.asset(
                                           config['intro']['icon'],
                                           fit: BoxFit.contain,
-                                          height: deviceHeight * .45,
+                                          height: deviceHeight * .3,
                                         ),
                                       ),
                                     ),

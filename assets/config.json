@@ -67,6 +67,13 @@
     }
   },
   "onboarding": {
+    "unsupported": {
+      "icon": "assets/app_icon.png",
+      "title": "onboarding.unsupported.title",
+      "body": "onboarding.unsupported.body",
+      "cta": "onboarding.unsupported.cta",
+      "skip": "onboarding.unsupported.skip"
+    },
     "intro": {
       "icon": "assets/app_icon.png",
       "title": "onboarding.intro.title",
@@ -259,5 +266,8 @@
         "link_title": "faqs.reported_5.link_title"
       }
     ]
+  },
+  "support": {
+    "gps_link": "https://play.google.com/store/apps/details?id=com.google.android.gms"
   }
 }

@@ -71,6 +71,11 @@ class DashboardState extends State with TickerProviderStateMixin {
   }
 
   void enableExposureNotifications(AppState state) async {
+    if (state.status == AuthorizationStatus.Unsupported && Platform.isAndroid) {
+      launch(Config.get()['support']['gps_link']);
+      return;
+    }
+
     try {
       await GactPlugin.enableExposureNotification();
       refreshStatus(state);

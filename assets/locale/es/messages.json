@@ -1,6 +1,10 @@
 {
   "theme.title": "COVID Trace",
   "healthAuthority.name": "Division of Public & Behavioral Health",
+  "onboarding.unsupported.title": "Actualizar Google Play Services",
+  "onboarding.unsupported.body": "La versión de Google Play Services que ha instalado no admite Notificaciones de Exposición. COVID Trace no puede funcionar correctamente hasta que actualice Google Play Services.",
+  "onboarding.unsupported.cta": "Actualizar Ahora",
+  "onboarding.unsupported.skip": "OMITIR",
   "onboarding.intro.title": "Proteger a Nevada",
   "onboarding.intro.body": "COVID Trace le avisa cuando puede usted haber estado expuesto al COVID-19. Las alertas tempranas y la acción rápida ayudan a detener la propagación y salvan vidas. Su participación es voluntaria y anónima para proteger su privacidad y salud.",
   "onboarding.intro.cta": "Comencemos",
