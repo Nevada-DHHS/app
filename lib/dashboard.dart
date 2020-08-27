@@ -7,10 +7,10 @@ import 'package:covidtrace/info_card.dart';
 import 'package:covidtrace/helper/metrics.dart' as metrics;
 import 'package:covidtrace/privacy_policy.dart';
 import 'package:covidtrace/storage/exposure.dart';
-import 'package:flutter/foundation.dart';
 import 'package:gact_plugin/gact_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:share/share.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:covidtrace/intl.dart' as locale;
@@ -85,6 +85,15 @@ class DashboardState extends State with TickerProviderStateMixin {
     }
   }
 
+  void aboutApp() {
+    launch(Config.get()['healthAuthority']['link']);
+  }
+
+  void shareApp() {
+    Share.share(Config.get()['support']
+        [Platform.isIOS ? 'app_link_ios' : 'app_link_android']);
+  }
+
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
@@ -109,30 +118,97 @@ class DashboardState extends State with TickerProviderStateMixin {
           SizedBox(height: 10),
         ];
 
-    var privacyPolicy = () {
+    var aboutCard = () {
       return Card(
-        margin: EdgeInsets.only(bottom: 15),
+        margin: EdgeInsets.zero,
+        child: Column(
+          children: [
+            InkWell(
+              onTap: () => aboutApp(),
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        intl.get(config['about']['title']),
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1
+                            .merge(TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      child: Image.asset(config['about']['icon'],
+                          color: Theme.of(context).primaryColor, height: 30),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 0, indent: 15, endIndent: 15),
+            InkWell(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                    fullscreenDialog: true, builder: (ctx) => PrivacyPolicy()),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        intl.get('status.all.privacy.title'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1
+                            .merge(TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      child: Image.asset('assets/shield_icon.png',
+                          color: Theme.of(context).primaryColor, height: 30),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    };
+
+    var shareCard = () {
+      return Card(
+        margin: EdgeInsets.zero,
         child: InkWell(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-                fullscreenDialog: true, builder: (ctx) => PrivacyPolicy()),
-          ),
+          onTap: () => shareApp(),
           child: Padding(
             padding: EdgeInsets.all(15),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(
-                    intl.get('status.all.privacy.title'),
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle1
-                        .merge(TextStyle(fontWeight: FontWeight.bold)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        intl.get(config['share']['title']),
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1
+                            .merge(TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      SizedBox(height: 5),
+                      Text(intl.get(config['share']['body'])),
+                    ],
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Image.asset('assets/shield_icon.png',
+                  child: Image.asset(config['share']['icon'],
                       color: Theme.of(context).primaryColor, height: 30),
                 ),
               ],
@@ -204,10 +280,12 @@ class DashboardState extends State with TickerProviderStateMixin {
                   ),
                 ),
                 ...heading(intl.get('status.non_exposure.faqs.title')),
+                shareCard(),
+                SizedBox(height: 10),
                 ...faqs["non_exposure"].map((item) => InfoCard(item: item)),
                 SizedBox(height: 10),
-                privacyPolicy(),
-                SizedBox(height: 10),
+                aboutCard(),
+                SizedBox(height: 20),
               ]),
             ));
       }
@@ -280,10 +358,12 @@ class DashboardState extends State with TickerProviderStateMixin {
                 ),
               ),
               ...heading(intl.get('status.non_exposure.faqs.title')),
+              shareCard(),
+              SizedBox(height: 10),
               ...faqs["non_exposure"].map((item) => InfoCard(item: item)),
               SizedBox(height: 10),
-              privacyPolicy(),
-              SizedBox(height: 10),
+              aboutCard(),
+              SizedBox(height: 20),
             ]),
           ),
         );
@@ -418,8 +498,8 @@ class DashboardState extends State with TickerProviderStateMixin {
             SizedBox(height: 10),
             ...faqs["exposure"].map((item) => InfoCard(item: item)),
             SizedBox(height: 10),
-            privacyPolicy(),
-            SizedBox(height: 10),
+            aboutCard(),
+            SizedBox(height: 20),
           ]),
         ),
       );

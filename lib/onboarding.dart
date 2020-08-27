@@ -46,7 +46,6 @@ class OnboardingState extends State {
   var _pageController = PageController();
   var _requestExposure = false;
   var _requestNotification = false;
-  var _exposureRequested = false;
 
   // This is only reachable on Android
   void upgradeApi() {
@@ -56,7 +55,7 @@ class OnboardingState extends State {
   void nextPage() => _pageController.nextPage(
       duration: Duration(milliseconds: 250), curve: Curves.easeOut);
 
-  void requestPermission(bool selected) async {
+  void requestPermission() async {
     AuthorizationStatus status;
     try {
       status = await GactPlugin.authorizationStatus;
@@ -77,8 +76,9 @@ class OnboardingState extends State {
 
     setState(() {
       _requestExposure = status == AuthorizationStatus.Authorized;
-      _exposureRequested = true;
     });
+
+    nextPage();
   }
 
   void requestNotifications(bool selected) async {
@@ -97,8 +97,12 @@ class OnboardingState extends State {
     var user = state.user;
     user.onboarding = false;
 
-    await state.saveUser(user);
-    await state.checkStatus();
+    try {
+      await state.saveUser(user);
+      await state.checkStatus();
+    } catch (err) {
+      print(err);
+    }
 
     metrics.onboard(
       authorized: _requestExposure,
@@ -231,6 +235,7 @@ class OnboardingState extends State {
                                       intl.get(config['intro']['body']),
                                       style: bodyText,
                                     ),
+                                    SizedBox(height: 150),
                                   ])),
                           Positioned(
                             left: 0,
@@ -307,7 +312,7 @@ class OnboardingState extends State {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 30),
+                                      SizedBox(height: 150),
                                     ]),
                               ),
                             ),
@@ -368,21 +373,7 @@ class OnboardingState extends State {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 50),
-                                    Center(
-                                        child: Transform.scale(
-                                            scale: 1.5,
-                                            child: Material(
-                                                color: Colors.transparent,
-                                                child: Switch.adaptive(
-                                                  inactiveTrackColor:
-                                                      Colors.black26,
-                                                  activeColor: Color(int.parse(
-                                                      theme[
-                                                          'button_background'])),
-                                                  value: _requestExposure,
-                                                  onChanged: requestPermission,
-                                                )))),
+                                    SizedBox(height: 150),
                                   ])),
                           Positioned(
                               left: 0,
@@ -391,60 +382,61 @@ class OnboardingState extends State {
                               child: BlockButton(
                                   label: intl.get(
                                       config['exposure_notification']['cta']),
-                                  onPressed:
-                                      _exposureRequested ? nextPage : null)),
+                                  onPressed: () => requestPermission())),
                         ]),
                         Stack(overflow: Overflow.visible, children: [
-                          Container(
+                          SingleChildScrollView(
+                              physics: AlwaysScrollableScrollPhysics(),
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                Text(
-                                  intl.get(config['notification_permission']
-                                      ['title']),
-                                  style: themeData.textTheme.headline5,
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  intl.get(config['notification_permission']
-                                      ['body']),
-                                  style: bodyText,
-                                ),
-                                SizedBox(height: 20),
-                                Image.asset(platform == TargetPlatform.iOS
-                                    ? config['notification_permission']
-                                        ['preview_ios']
-                                    : config['notification_permission']
-                                        ['preview_android']),
-                                SizedBox(height: 20),
-                                platform == TargetPlatform.iOS
-                                    ? Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                            onTap: () => requestNotifications(
-                                                !_requestExposure),
-                                            child: Row(children: [
-                                              Expanded(
-                                                  child: Text(
-                                                      intl.get(config[
-                                                              'notification_permission']
-                                                          [
-                                                          'enable_toggle_title']),
-                                                      style: themeData.textTheme
-                                                          .headline6)),
-                                              Switch.adaptive(
-                                                  inactiveTrackColor:
-                                                      Colors.black26,
-                                                  activeColor: Color(int.parse(
-                                                      theme[
-                                                          'button_background'])),
-                                                  value: _requestNotification,
-                                                  onChanged:
-                                                      requestNotifications),
-                                            ])))
-                                    : Container(),
-                              ])),
+                                    Text(
+                                      intl.get(config['notification_permission']
+                                          ['title']),
+                                      style: themeData.textTheme.headline5,
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      intl.get(config['notification_permission']
+                                          ['body']),
+                                      style: bodyText,
+                                    ),
+                                    SizedBox(height: 20),
+                                    Image.asset(platform == TargetPlatform.iOS
+                                        ? config['notification_permission']
+                                            ['preview_ios']
+                                        : config['notification_permission']
+                                            ['preview_android']),
+                                    SizedBox(height: 20),
+                                    if (platform == TargetPlatform.iOS)
+                                      Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                              onTap: () => requestNotifications(
+                                                  !_requestExposure),
+                                              child: Row(children: [
+                                                Expanded(
+                                                    child: Text(
+                                                        intl.get(config[
+                                                                'notification_permission']
+                                                            [
+                                                            'enable_toggle_title']),
+                                                        style: themeData
+                                                            .textTheme
+                                                            .headline6)),
+                                                Switch.adaptive(
+                                                    inactiveTrackColor:
+                                                        Colors.black26,
+                                                    activeColor: Color(
+                                                        int.parse(theme[
+                                                            'button_background'])),
+                                                    value: _requestNotification,
+                                                    onChanged:
+                                                        requestNotifications),
+                                              ]))),
+                                    SizedBox(height: 150),
+                                  ])),
                           Positioned(
                             left: 0,
                             right: 0,

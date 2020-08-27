@@ -18,6 +18,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gact_plugin/gact_plugin.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -203,7 +204,8 @@ class MainPageState extends State<MainPage> {
 
   onBottomNavTap(int index) async {
     if (index == 2) {
-      launch(Config.get()['healthAuthority']['link']);
+      Share.share(Config.get()['support']
+          [Platform.isIOS ? 'app_link_ios' : 'app_link_android']);
       return;
     }
 
@@ -233,6 +235,9 @@ class MainPageState extends State<MainPage> {
                 actions: <Widget>[Container()], // Hides debug end drawer
               ),
               bottomNavigationBar: BottomNavigationBar(
+                showUnselectedLabels: true,
+                selectedItemColor: selectedColor,
+                unselectedItemColor: defaultColor,
                 currentIndex: _navIndex,
                 onTap: (value) => onBottomNavTap(value),
                 items: [
@@ -261,12 +266,12 @@ class MainPageState extends State<MainPage> {
                     icon: Padding(
                       padding: EdgeInsets.only(bottom: 5),
                       child: Image.asset(
-                        config['nav']['about']['icon'],
+                        config['nav']['share']['icon'],
                         height: 25,
                         color: _navIndex == 2 ? selectedColor : defaultColor,
                       ),
                     ),
-                    title: Text(intl.get(config['nav']['about']['title'])),
+                    title: Text(intl.get(config['nav']['share']['title'])),
                   ),
                 ],
               ),

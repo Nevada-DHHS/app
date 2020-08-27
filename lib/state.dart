@@ -214,7 +214,7 @@ class AppState with ChangeNotifier {
 
     if (statusCode != 200) {
       var code = getErrorCode(postResp);
-      if (code == 'token_invalid') {
+      if (code == 'code_invalid') {
         throw ('errors.verify_code_failed');
       } else {
         throw (getErrorMessage(postResp));

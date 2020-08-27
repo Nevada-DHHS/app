@@ -64,6 +64,10 @@
     "about": {
       "title": "nav.about.title",
       "icon": "assets/info_icon.png"
+    },
+    "share": {
+      "title": "nav.about.share",
+      "icon": "assets/users_icon.png"
     }
   },
   "onboarding": {
@@ -125,6 +129,15 @@
       "enable_toggle_title": "onboarding.notification_permission.enable_toggle_title",
       "cta": "onboarding.notification_permission.cta"
     }
+  },
+  "about": {
+    "title": "about.title",
+    "icon": "assets/info_icon.png"
+  },
+  "share": {
+    "title": "share.title",
+    "body": "share.body",
+    "icon": "assets/users_icon.png"
   },
   "faqs": {
     "non_exposure": [
@@ -268,6 +281,8 @@
     ]
   },
   "support": {
-    "gps_link": "https://play.google.com/store/apps/details?id=com.google.android.gms"
+    "gps_link": "https://play.google.com/store/apps/details?id=com.google.android.gms",
+    "app_link_ios": "https://g.co/ens",
+    "app_link_android": "https://g.co/ens"
   }
 }
