@@ -19,7 +19,6 @@ import 'package:gact_plugin/gact_plugin.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock/wakelock.dart';
 
 void main() async {
@@ -250,8 +249,7 @@ class MainPageState extends State<MainPage> {
                           color: _navIndex == 0 ? selectedColor : defaultColor,
                         ),
                       ),
-                      title:
-                          Text(intl.get(config['nav']['dashboard']['title']))),
+                      label: intl.get(config['nav']['dashboard']['title'])),
                   BottomNavigationBarItem(
                       icon: Padding(
                         padding: EdgeInsets.only(bottom: 5),
@@ -261,7 +259,7 @@ class MainPageState extends State<MainPage> {
                           color: _navIndex == 1 ? selectedColor : defaultColor,
                         ),
                       ),
-                      title: Text(intl.get(config['nav']['report']['title']))),
+                      label: intl.get(config['nav']['report']['title'])),
                   BottomNavigationBarItem(
                     icon: Padding(
                       padding: EdgeInsets.only(bottom: 5),
@@ -271,7 +269,7 @@ class MainPageState extends State<MainPage> {
                         color: _navIndex == 2 ? selectedColor : defaultColor,
                       ),
                     ),
-                    title: Text(intl.get(config['nav']['share']['title'])),
+                    label: intl.get(config['nav']['share']['title']),
                   ),
                 ],
               ),

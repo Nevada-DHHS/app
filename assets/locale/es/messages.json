@@ -66,7 +66,7 @@
   "report.submitted.notice.date": "El $0",
   "report.submitted.notice.body": "Gracias por enviar su historial de exposición anónimo. Sus datos ayudarán a responder más rápido a las personas en riesgo.",
   "privacy_policy.title": "Política de Privacidad",
-  "privacy_policy.content": "assets/locale/en/privacy_policy.md",
+  "privacy_policy.content": "assets/locale/es/privacy_policy.md",
   "testing.title": "Encuentre un laboratorio de pruebas",
   "testing.location_select.title": "Elija un condado",
   "report.submitted.faqs.title": "Qué hacer a continuación",
