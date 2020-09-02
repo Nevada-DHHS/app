@@ -22,7 +22,8 @@ class Config {
 
     WidgetsFlutterBinding.ensureInitialized();
 
-    var source = await rootBundle.loadString('assets/config.json');
+    var source = await rootBundle.loadString(
+        'assets/config/${kReleaseMode ? 'release' : 'test'}/config.json');
     _local = jsonDecode(source);
 
     try {

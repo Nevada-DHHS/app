@@ -1,0 +1,288 @@
+{
+  "remote": "assets/config/test/remote.json",
+  "theme": {
+    "title": "theme.title",
+    "icon": "assets/app_icon.png",
+    "primarySwatch": {
+      "50": "0xfffff2f4",
+      "100": "0xffffc8d1",
+      "200": "0xffff9eaa",
+      "300": "0xffff7884",
+      "400": "0xffff5a63",
+      "500": "0xFF005A9C",
+      "600": "0xFF004691",
+      "700": "0xFF00307F",
+      "800": "0xFF001C69",
+      "900": "0xFF000E52"
+    },
+    "onboarding": {
+      "system_overlay": "light",
+      "background": "0xFF005A9C",
+      "text": "0xFFFFFFFF",
+      "button_background": "0xFFFFCF53",
+      "button_text": "0xFF00307F"
+    },
+    "dashboard": {
+      "not_authorized_background": "0xFFFFCF53",
+      "not_authorized_text": "0xFF00307F",
+      "non_exposure_background": "0xFF001C69",
+      "non_exposure_text": "0xFFFFFFFF",
+      "exposure_background": "0xFFFF0000",
+      "exposure_text": "0xFFFFFFFF",
+      "reported_background": "0xFF001C69",
+      "reported_text": "0xFFFFFFFF"
+    }
+  },
+  "healthAuthority": {
+    "name": "healthAuthority.name",
+    "updated": "2020-05-01",
+    "link": "https://nvhealthresponse.nv.gov/covidtrace",
+    "phone_number": "833-625-0591",
+    "icon": "assets/app_icon.png"
+  },
+  "test_facilities": {
+    "state": "NV",
+    "css": [
+      "assets/test_facilities/lato.css",
+      "assets/test_facilities/bootstrap.min.css",
+      "assets/test_facilities/foundation.min.css",
+      "assets/test_facilities/ionicons.min.css",
+      "assets/test_facilities/main.css",
+      "assets/test_facilities/select2.min.css",
+      "assets/test_facilities/override.css"
+    ]
+  },
+  "nav": {
+    "dashboard": {
+      "title": "nav.dashboard.title",
+      "icon": "assets/people_arrows_icon.png"
+    },
+    "report": {
+      "title": "nav.report.title",
+      "icon": "assets/self_report_icon.png"
+    },
+    "about": {
+      "title": "nav.about.title",
+      "icon": "assets/info_icon.png"
+    },
+    "share": {
+      "title": "nav.about.share",
+      "icon": "assets/users_icon.png"
+    }
+  },
+  "onboarding": {
+    "unsupported": {
+      "icon": "assets/app_icon.png",
+      "title": "onboarding.unsupported.title",
+      "body": "onboarding.unsupported.body",
+      "cta": "onboarding.unsupported.cta",
+      "skip": "onboarding.unsupported.skip"
+    },
+    "intro": {
+      "icon": "assets/app_icon.png",
+      "title": "onboarding.intro.title",
+      "body": "onboarding.intro.body",
+      "cta": "onboarding.intro.cta"
+    },
+    "privacy": {
+      "icon": "assets/lock_icon.png",
+      "title": "onboarding.privacy.title",
+      "body": "onboarding.privacy.body",
+      "bullets": [
+        {
+          "title": "onboarding.privacy.bullets_0.title",
+          "icon": "assets/location_slash_icon.png"
+        },
+        {
+          "title": "onboarding.privacy.bullets_1.title",
+          "icon": "assets/map_marker_slash_icon.png"
+        },
+        {
+          "title": "onboarding.privacy.bullets_2.title",
+          "icon": "assets/phone_slash_icon.png"
+        },
+        {
+          "title": "onboarding.privacy.bullets_3.title",
+          "icon": "assets/user_slash_icon.png"
+        },
+        {
+          "title": "onboarding.privacy.bullets_4.title",
+          "icon": "assets/users_slash_icon.png"
+        }
+      ],
+      "privacy_title": "onboarding.privacy.privacy_title",
+      "cta": "onboarding.privacy.cta"
+    },
+    "exposure_notification": {
+      "icon": "assets/people_arrows_icon.png",
+      "title": "onboarding.exposure_notification.title",
+      "body": "onboarding.exposure_notification.body",
+      "learn_more_title": "onboarding.exposure_notification.learn_more_title",
+      "learn_more_link": "onboarding.exposure_notification.learn_more_link",
+      "cta": "onboarding.exposure_notification.cta"
+    },
+    "notification_permission": {
+      "title": "onboarding.notification_permission.title",
+      "body": "onboarding.notification_permission.body",
+      "preview_ios": "assets/ios_notification.png",
+      "preview_android": "assets/android_notification.png",
+      "enable_toggle_title": "onboarding.notification_permission.enable_toggle_title",
+      "cta": "onboarding.notification_permission.cta"
+    }
+  },
+  "about": {
+    "title": "about.title",
+    "icon": "assets/info_icon.png"
+  },
+  "share": {
+    "title": "share.title",
+    "body": "share.body",
+    "icon": "assets/users_icon.png"
+  },
+  "faqs": {
+    "non_exposure": [
+      {
+        "icon": "assets/prevention.png",
+        "title": "faqs.non_exposure_0.title",
+        "body": "faqs.non_exposure_0.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/prevention.html",
+        "link_title": "faqs.non_exposure_0.link_title"
+      },
+      {
+        "icon": "assets/mask.png",
+        "title": "faqs.non_exposure_1.title",
+        "body": "faqs.non_exposure_1.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/how-to-wear-cloth-face-coverings.html",
+        "link_title": "faqs.non_exposure_1.link_title"
+      },
+      {
+        "icon": "assets/checklist.png",
+        "title": "faqs.non_exposure_2.title",
+        "body": "faqs.non_exposure_2.body",
+        "link": "https://landing.google.com/screener/covid19",
+        "link_title": "faqs.non_exposure_2.link_title"
+      },
+      {
+        "icon": "assets/sick.png",
+        "title": "faqs.non_exposure_3.title",
+        "body": "faqs.non_exposure_3.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/steps-when-sick.html",
+        "link_title": "faqs.non_exposure_3.link_title"
+      },
+      {
+        "icon": "assets/chart.png",
+        "title": "faqs.non_exposure_4.title",
+        "body": "faqs.non_exposure_4.body",
+        "link": "https://news.google.com/covid19/map?hl=en-US&gl=US&ceid=US%3Aen&mid=%2Fm%2F059_c",
+        "link_title": "faqs.non_exposure_4.link_title"
+      },
+      {
+        "icon": "assets/nevada.png",
+        "title": "faqs.non_exposure_5.title",
+        "body": "faqs.non_exposure_5.body",
+        "link": "https://nvhealthresponse.nv.gov/",
+        "link_title": "faqs.non_exposure_4.link_title"
+      }
+    ],
+    "exposure": [
+      {
+        "icon": "assets/checklist.png",
+        "title": "faqs.exposure_0.title",
+        "body": "faqs.exposure_0.body",
+        "link": "https://landing.google.com/screener/covid19",
+        "link_title": "faqs.exposure_0.link_title"
+      },
+      {
+        "icon": "assets/thermometer.png",
+        "title": "faqs.exposure_1.title",
+        "body": "faqs.exposure_1.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html",
+        "link_title": "faqs.exposure_1.link_title"
+      },
+      {
+        "icon": "assets/sick.png",
+        "title": "faqs.exposure_2.title",
+        "body": "faqs.exposure_2.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/steps-when-sick.html",
+        "link_title": "faqs.exposure_2.link_title"
+      },
+      {
+        "icon": "assets/prevention.png",
+        "title": "faqs.exposure_3.title",
+        "body": "faqs.exposure_3.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/prevention.html",
+        "link_title": "faqs.exposure_3.link_title"
+      },
+      {
+        "icon": "assets/mask.png",
+        "title": "faqs.exposure_4.title",
+        "body": "faqs.exposure_4.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/how-to-wear-cloth-face-coverings.html",
+        "link_title": "faqs.exposure_4.link_title"
+      },
+      {
+        "icon": "assets/chart.png",
+        "title": "faqs.exposure_5.title",
+        "body": "faqs.exposure_5.body",
+        "link": "https://news.google.com/covid19/map?hl=en-US&gl=US&ceid=US%3Aen&mid=%2Fm%2F059_c",
+        "link_title": "faqs.exposure_5.link_title"
+      },
+      {
+        "icon": "assets/nevada.png",
+        "title": "faqs.exposure_6.title",
+        "body": "faqs.exposure_6.body",
+        "link": "https://nvhealthresponse.nv.gov/",
+        "link_title": "faqs.exposure_6.link_title"
+      }
+    ],
+    "reported": [
+      {
+        "icon": "assets/sick.png",
+        "title": "faqs.reported_0.title",
+        "body": "faqs.reported_0.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/steps-when-sick.html",
+        "link_title": "faqs.reported_0.link_title"
+      },
+      {
+        "icon": "assets/thermometer.png",
+        "title": "faqs.reported_1.title",
+        "body": "faqs.reported_1.body",
+        "link": "https://landing.google.com/screener/covid19",
+        "link_title": "faqs.reported_1.link_title"
+      },
+      {
+        "icon": "assets/prevention.png",
+        "title": "faqs.reported_2.title",
+        "body": "faqs.reported_2.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/prevention.html",
+        "link_title": "faqs.reported_2.link_title"
+      },
+      {
+        "icon": "assets/mask.png",
+        "title": "faqs.reported_3.title",
+        "body": "faqs.reported_3.body",
+        "link": "https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/how-to-wear-cloth-face-coverings.html",
+        "link_title": "faqs.reported_3.link_title"
+      },
+      {
+        "icon": "assets/chart.png",
+        "title": "faqs.reported_4.title",
+        "body": "faqs.reported_4.body",
+        "link": "https://news.google.com/covid19/map?hl=en-US&gl=US&ceid=US%3Aen&mid=%2Fm%2F059_c",
+        "link_title": "faqs.reported_4.link_title"
+      },
+      {
+        "icon": "assets/nevada.png",
+        "title": "faqs.reported_5.title",
+        "body": "faqs.reported_5.body",
+        "link": "https://nvhealthresponse.nv.gov/",
+        "link_title": "faqs.reported_5.link_title"
+      }
+    ]
+  },
+  "support": {
+    "gps_link": "https://play.google.com/store/apps/details?id=com.google.android.gms",
+    "app_link_ios": "https://g.co/ens",
+    "app_link_android": "https://g.co/ens"
+  }
+}
