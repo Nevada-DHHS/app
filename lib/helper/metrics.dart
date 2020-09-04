@@ -110,5 +110,8 @@ Future notify() {
 }
 
 Future check(bool background, {int delay = 0}) {
-  return report({"event": "check", "bg": background, "delay": delay});
+  return report({
+    "event": "check",
+    "payload": {"bg": background, "delay": delay}
+  });
 }
