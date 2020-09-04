@@ -14,6 +14,7 @@
   },
   "verifyUrl": "https://apiserver-btmqe5w5mq-uc.a.run.app",
   "verifyApiKey": "ILeOheqo4ErUB8xJC25hcujN2kPCINHf2rhrcCtyizpOsm7HiLJshOn9wLZdUyYwDVEbrj0DFSExIhPizfxzhg.1.XoG4rPsXFyCJ52rSq51X-U6a33L4t6DMc4mHYZoVGnG7fUTFh2Qv0ZhBTOscu0MCSkpCbOq1USaSx2KEc_93nA",
+  "metricsPublishUrl": "https://us-west4-covidtrace-nevada-staging.cloudfunctions.net/metric",
   "override": {
     "healthAuthority": {
       "link": "https://nvhealthresponse.nv.gov/covidtrace",

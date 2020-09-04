@@ -27,14 +27,12 @@ void main() async {
   GactPlugin.setup();
 
   runApp(ChangeNotifierProvider(
-      create: (context) => AppState(), child: CovidTraceApp()));
+      create: (context) => AppState.instance, child: CovidTraceApp()));
 
-  if (Platform.isAndroid) {
-    BackgroundFetch.registerHeadlessTask((String id) async {
-      await checkExposures();
-      BackgroundFetch.finish(id);
-    });
-  }
+  BackgroundFetch.registerHeadlessTask((String id) async {
+    await checkExposures();
+    BackgroundFetch.finish(id);
+  });
 
   var notificationPlugin = FlutterLocalNotificationsPlugin();
   notificationPlugin.initialize(
@@ -111,7 +109,7 @@ class MainPageState extends State<MainPage> {
     await BackgroundFetch.configure(
         BackgroundFetchConfig(
           enableHeadless: true,
-          minimumFetchInterval: 15,
+          minimumFetchInterval: (kReleaseMode ? 120 : 15),
           requiredNetworkType: NetworkType.ANY,
           requiresBatteryNotLow: true,
           requiresCharging: false,
@@ -120,9 +118,7 @@ class MainPageState extends State<MainPage> {
           startOnBoot: true,
           stopOnTerminate: false,
         ), (String taskId) async {
-      if (taskId == enTaskID) {
-        await checkExposures();
-      }
+      await checkExposures();
       BackgroundFetch.finish(taskId);
     });
 

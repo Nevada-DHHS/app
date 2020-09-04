@@ -6,7 +6,6 @@ import 'package:covidtrace/config.dart';
 import 'package:covidtrace/info_card.dart';
 import 'package:covidtrace/helper/metrics.dart' as metrics;
 import 'package:covidtrace/privacy_policy.dart';
-import 'package:covidtrace/storage/exposure.dart';
 import 'package:gact_plugin/gact_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,17 +22,11 @@ class Dashboard extends StatefulWidget {
 }
 
 class DashboardState extends State with TickerProviderStateMixin {
-  ExposureModel _oldest;
+  bool _refreshing = false;
 
   void initState() {
     super.initState();
-    loadOldest();
     loadConfig();
-  }
-
-  void loadOldest() async {
-    var exposures = await ExposureModel.findAll(limit: 1, orderBy: 'date');
-    setState(() => _oldest = exposures.isNotEmpty ? exposures.first : null);
   }
 
   void loadConfig() async {
@@ -50,12 +43,20 @@ class DashboardState extends State with TickerProviderStateMixin {
       return;
     }
 
+    setState(() {
+      _refreshing = true;
+    });
+
     var error;
     try {
       await state.checkExposures();
     } catch (err) {
       error = 'errors.no_connection';
     }
+
+    setState(() {
+      _refreshing = false;
+    });
 
     if (error != null) {
       var intl = locale.Intl.of(context);
@@ -221,13 +222,6 @@ class DashboardState extends State with TickerProviderStateMixin {
     return Consumer<AppState>(builder: (context, state, _) {
       var intl = locale.Intl.of(context);
       var lastCheck = state.user.lastCheck;
-      int days = 0;
-      int hours = 0;
-      if (_oldest != null) {
-        var diff = DateTime.now().difference(_oldest.date);
-        days = diff.inDays;
-        hours = diff.inHours;
-      }
 
       var bgColor = Color(int.parse(theme['not_authorized_background']));
       var textColor = Color(int.parse(theme['not_authorized_text']));
@@ -302,58 +296,61 @@ class DashboardState extends State with TickerProviderStateMixin {
             onRefresh: () => refreshExposures(state),
             child: ListView(children: [
               SizedBox(height: 15),
-              Container(
-                decoration: BoxDecoration(
-                    color: bgColor, borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
+              InkWell(
+                onTap: () => refreshExposures(state),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: bgColor, borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                  Text(
+                                      intl.get(
+                                          'status.non_exposure.notice.title'),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          .merge(alertText)),
+                                ])),
+                            Image.asset('assets/people_arrows_icon.png',
+                                height: 40, color: textColor),
+                          ],
+                        ),
+                        Divider(height: 20, color: textColor),
+                        Row(children: [
                           Expanded(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                Text(
-                                    intl.get(
-                                        'status.non_exposure.notice.title'),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline6
-                                        .merge(alertText)),
-                                Text(
-                                    days >= 1
-                                        ? intl.get(
-                                            'status.non_exposure.notice.since_${days > 1 ? 'days' : 'day'}',
-                                            args: [
-                                                days.toString()
-                                              ])
-                                        : intl.get(
-                                            'status.non_exposure.notice.since_${hours > 1 ? 'hours' : 'hour'}',
-                                            args: [
-                                                hours.toString()
-                                              ]),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle1
-                                        .merge(alertText))
-                              ])),
-                          Image.asset('assets/people_arrows_icon.png',
-                              height: 40, color: textColor),
-                        ],
-                      ),
-                      Divider(height: 20, color: textColor),
-                      Text(
-                          intl.get('status.non_exposure.notice.last_check',
-                              args: [
-                                DateFormat.jm()
-                                    .format(lastCheck ?? DateTime.now())
-                                    .toLowerCase()
-                              ]),
-                          style: alertText)
-                    ],
+                              child: Text(
+                                  intl.get(
+                                      'status.non_exposure.notice.last_check',
+                                      args: [
+                                        DateFormat.jm()
+                                            .format(lastCheck ?? DateTime.now())
+                                            .toLowerCase()
+                                      ]),
+                                  style: alertText)),
+                          _refreshing
+                              ? Container(
+                                  width: 25,
+                                  height: 25,
+                                  padding: EdgeInsets.all(5),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    backgroundColor: textColor,
+                                  ),
+                                )
+                              : Icon(Icons.refresh, color: textColor, size: 25),
+                        ]),
+                      ],
+                    ),
                   ),
                 ),
               ),

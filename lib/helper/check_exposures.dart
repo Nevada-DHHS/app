@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:covidtrace/config.dart';
 import 'package:covidtrace/helper/metrics.dart' as metrics;
+import 'package:covidtrace/state.dart';
 import 'package:covidtrace/storage/exposure.dart';
-import 'package:covidtrace/storage/user.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:gact_plugin/gact_plugin.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +22,7 @@ Future<List<Uri>> processKeyIndexFile(
     return null;
   }
 
-  var user = await UserModel.find();
+  var user = AppState.instance.user;
   var lastKeyFile = user.lastKeyFile ?? '';
   // Filter objects for any that are lexically equal to or greater than
   // the last downloaded batch. If we have never checked before, we
@@ -122,8 +122,18 @@ Future<List<ExposureInfo>> detectExposures(
   return exposures;
 }
 
-Future<ExposureInfo> checkExposures() async {
+Future<ExposureInfo> checkExposures({bool background = true}) async {
   print('Checking exposures...');
+  if (!AppState.instance.ready) {
+    await AppState.instance.refresh();
+  }
+
+  var user = AppState.instance.user;
+  var now = DateTime.now();
+  metrics.check(background,
+      delay: user.lastCheck != null
+          ? now.difference(user.lastCheck).inMilliseconds
+          : 0);
 
   var results = await Future.wait([
     Config.remote(),
@@ -153,9 +163,8 @@ Future<ExposureInfo> checkExposures() async {
         keyFiles, config['exposureNotificationConfiguration']);
   }
 
-  var user = await UserModel.find();
-  user.lastCheck = DateTime.now();
-  await user.save();
+  user.lastCheck = now;
+  AppState.instance.saveUser(user);
 
   exposures.sort((a, b) => a.date.compareTo(b.date));
   var exposure = exposures.isNotEmpty ? exposures.last : null;
@@ -164,6 +173,10 @@ Future<ExposureInfo> checkExposures() async {
 
   if (exposure != null) {
     metrics.exposure();
+  }
+
+  if (background) {
+    AppState.instance.refresh();
   }
 
   return exposure;

@@ -5,6 +5,7 @@ import 'package:covidtrace/config.dart';
 import 'package:flutter_safetynet_attestation/flutter_safetynet_attestation.dart';
 import 'package:gact_plugin/gact_plugin.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info/package_info.dart';
 import 'package:uuid/uuid.dart';
 
 Future<http.Response> report(Map<String, dynamic> postData) async {
@@ -49,6 +50,9 @@ Future<http.Response> report(Map<String, dynamic> postData) async {
       print(err);
     }
   }
+
+  postData['version'] = (await PackageInfo.fromPlatform()).version;
+  print(postData);
 
   var url = config['metricsPublishUrl'];
   var postResp;
@@ -103,4 +107,8 @@ Future notify() {
   return report({
     "event": "notify",
   });
+}
+
+Future check(bool background, {int delay = 0}) {
+  return report({"event": "check", "bg": background, "delay": delay});
 }

@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:covidtrace/config.dart';
 import 'package:covidtrace/helper/check_exposures.dart' as bg;
 import 'package:covidtrace/helper/metrics.dart' as metrics;
-import 'package:covidtrace/storage/db.dart';
 import 'package:covidtrace/storage/exposure.dart';
 import 'package:covidtrace/storage/report.dart';
 import 'package:covidtrace/storage/user.dart';
@@ -14,7 +13,6 @@ import 'package:gact_plugin/gact_plugin.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:package_info/package_info.dart';
-import 'package:sqflite/sqflite.dart';
 
 class NotificationState with ChangeNotifier {
   static final instance = NotificationState();
@@ -25,6 +23,8 @@ class NotificationState with ChangeNotifier {
 }
 
 class AppState with ChangeNotifier {
+  static final instance = AppState();
+
   static UserModel _user;
   static ReportModel _report;
   static bool _ready = false;
@@ -62,6 +62,17 @@ class AppState with ChangeNotifier {
 
   AuthorizationStatus get status => _status;
 
+  Future<void> refresh() async {
+    print('refreshing app state');
+
+    _user = await UserModel.find();
+    _report = await ReportModel.findLatest();
+    _exposure = await getExposure();
+    _status = await checkStatus();
+
+    notifyListeners();
+  }
+
   Future<ExposureModel> getExposure() async {
     var rows = await ExposureModel.findAll(limit: 1, orderBy: 'date DESC');
 
@@ -80,7 +91,7 @@ class AppState with ChangeNotifier {
   }
 
   Future<ExposureModel> checkExposures() async {
-    await bg.checkExposures();
+    await bg.checkExposures(background: false);
     _user = await UserModel.find();
     _exposure = await getExposure();
     notifyListeners();
@@ -287,9 +298,11 @@ class AppState with ChangeNotifier {
   }
 
   Future<void> resetInfections() async {
-    final Database db = await Storage.db;
+    var user = AppState.instance.user;
+    user.lastKeyFile = null;
+
     await Future.wait([
-      db.update('user', {'last_check': null, 'last_key_file': null}),
+      AppState.instance.saveUser(user),
       ExposureModel.destroyAll(),
     ]);
     _exposure = null;

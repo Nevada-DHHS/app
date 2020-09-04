@@ -1,7 +1,7 @@
 PODS:
   - "app_settings (3.0.0+1)":
     - Flutter
-  - background_fetch (0.5.4):
+  - background_fetch (0.5.6):
     - Flutter
   - e2e (0.0.1):
     - Flutter
@@ -88,7 +88,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
-  background_fetch: c0d7c541f8495527ed7f167eb9ee2eeab0790703
+  background_fetch: 9e1c6c010f2bafe94108358405b7f2a08d6b5ab1
   e2e: 967b9b1fc533b7636a3b7a719f840c27f301fe1f
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_local_notifications: 9e4738ce2471c5af910d961a6b7eadcf57c50186
