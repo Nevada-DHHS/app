@@ -11,6 +11,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
+bool checkingExposures = false;
+
 Future<List<Uri>> processKeyIndexFile(
   String url,
   Directory dir,
@@ -41,14 +43,12 @@ Future<List<Uri>> processKeyIndexFile(
 
   var parsed = Uri.parse(url);
   var path = parsed.pathSegments;
-  var keyFiles = await downloadExposureKeyFiles(
-      await Future.wait(exportFiles.map((fileName) async {
-        // Note that export zip files are always in the same directory as the index file
-        // and that the index file has entries like so:
-        // "/exposure-key-index-dir/path-to-export-file.zip"
-        return '${parsed.origin}/${path.sublist(0, path.length - 2).join('/')}/$fileName';
-      })),
-      dir);
+  var keyFiles = await downloadExposureKeyFiles(exportFiles.map((fileName) {
+    // Note that export zip files are always in the same directory as the index file
+    // and that the index file has entries like so:
+    // "/exposure-key-index-dir/path-to-export-file.zip"
+    return '${parsed.origin}/${path.sublist(0, path.length - 2).join('/')}/$fileName';
+  }), dir);
 
   return keyFiles;
 }
@@ -123,6 +123,11 @@ Future<List<ExposureInfo>> detectExposures(
 }
 
 Future<ExposureInfo> checkExposures({bool background = true}) async {
+  if (checkingExposures) {
+    return null;
+  }
+  checkingExposures = true;
+
   print('Checking exposures...');
   if (!AppState.instance.ready) {
     await AppState.instance.refresh();
@@ -164,11 +169,12 @@ Future<ExposureInfo> checkExposures({bool background = true}) async {
   }
 
   user.lastCheck = now;
-  AppState.instance.saveUser(user);
+  await AppState.instance.saveUser(user);
 
   exposures.sort((a, b) => a.date.compareTo(b.date));
   var exposure = exposures.isNotEmpty ? exposures.last : null;
 
+  checkingExposures = false;
   print('Done checking exposures!');
 
   if (exposure != null) {
