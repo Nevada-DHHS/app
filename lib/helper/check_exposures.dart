@@ -72,9 +72,9 @@ Future<List<Uri>> downloadExposureKeyFiles(
   }));
 
   // Decompress and verify downloads
-  List<Uri> keyFiles = await Future.wait(downloads.map((File file) async {
+  List<List<Uri>> keyFiles = await Future.wait(downloads.map((File file) async {
     if (Platform.isAndroid) {
-      return file.uri;
+      return [file.uri];
     }
 
     var archive = ZipDecoder().decodeBytes(await file.readAsBytes());
@@ -82,17 +82,25 @@ Future<List<Uri>> downloadExposureKeyFiles(
     var second = archive.files[1];
 
     var bin = first.name == 'export.bin' ? first : second;
+    var sig = first.name == 'export.sig' ? first : second;
 
-    // Save bin file to disk
+    // Save files to disk
     var binFile = File('${file.path}.bin');
+    var sigFile = File('${file.path}.sig');
+
     if (!await binFile.exists()) {
       await binFile.create(recursive: true);
     }
     await binFile.writeAsBytes(bin.content as List<int>);
-    return binFile.uri;
+
+    if (!await sigFile.exists()) {
+      await sigFile.create(recursive: true);
+    }
+    await sigFile.writeAsBytes(sig.content as List<int>);
+    return [binFile.uri, sigFile.uri];
   }));
 
-  return keyFiles;
+  return keyFiles.expand((files) => files).toList();
 }
 
 Future<List<ExposureInfo>> detectExposures(
