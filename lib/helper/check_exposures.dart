@@ -107,13 +107,20 @@ Future<List<ExposureInfo>> detectExposures(
     List<Uri> keyFiles, Map<String, dynamic> exposureConfig) async {
   await GactPlugin.setExposureConfiguration(exposureConfig);
 
-  await GactPlugin.setUserExplanation(
-      'You were in close proximity to someone who tested positive for COVID-19.');
-
   // Save all found exposures
   List<ExposureInfo> exposures;
   try {
-    exposures = (await GactPlugin.detectExposures(keyFiles)).toList();
+    await GactPlugin.detectExposures(keyFiles);
+    var summary = await GactPlugin.getExposureSummary();
+    print('Exposure summary after detection:');
+    print(summary);
+    if (summary == null) {
+      return [];
+    }
+
+    exposures = (await GactPlugin.getExposureInfo(
+            'You were in close proximity to someone who tested positive for COVID-19.'))
+        .toList();
     await Future.wait(exposures.map((e) {
       return ExposureModel(
         date: e.date,
@@ -125,6 +132,8 @@ Future<List<ExposureInfo>> detectExposures(
   } catch (err) {
     print(err);
     return [];
+  } finally {
+    await Future.wait(keyFiles.map((file) => File(file.toFilePath()).delete()));
   }
 
   return exposures;

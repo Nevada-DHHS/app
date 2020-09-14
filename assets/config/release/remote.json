@@ -6,13 +6,13 @@
   "exposureNotificationConfiguration": {
     "minimumRiskScore": 25,
     "attenuationLevelValues": [1, 1, 8, 8, 8, 8, 8, 8],
-    "attenuationWeight": 50,
-    "daysSinceLastExposureLevelValues": [1, 2, 3, 4, 5, 6, 7, 8],
-    "daysSinceLastExposureWeight": 50,
+    "attenuationWeight": 1,
+    "daysSinceLastExposureLevelValues": [1, 1, 1, 1, 1, 1, 1, 1],
+    "daysSinceLastExposureWeight": 1,
     "durationLevelValues": [0, 0, 0, 5, 5, 8, 8, 8],
-    "durationWeight": 50,
-    "transmissionRiskLevelValues": [1, 2, 3, 4, 5, 6, 7, 8],
-    "transmissionRiskWeight": 50
+    "durationWeight": 1,
+    "transmissionRiskLevelValues": [1, 1, 1, 1, 1, 1, 1, 1],
+    "transmissionRiskWeight": 1
   },
   "verifyUrl": "https://apiserver-5v7v5qboea-uc.a.run.app",
   "verifyApiKey": "Gp/7ClkagyiAdpCRIuyivHUwy9BnoSHW21BYbarXtI6gqKxDDKwFmcXpwf06ynF5n828yAAkVaat+oBNC2kKQg",
