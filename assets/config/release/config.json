@@ -283,6 +283,6 @@
   "support": {
     "gps_link": "https://play.google.com/store/apps/details?id=com.google.android.gms",
     "app_link_ios": "https://apps.apple.com/us/app/id1524365131",
-    "app_link_android": "https://play.google.com/store/apps/details?id=gov.nv.dhhs.en"
+    "app_link_android": "https://play.app.goo.gl/?link=https://play.google.com/store/apps/details?id=gov.nv.dhhs.en"
   }
 }
