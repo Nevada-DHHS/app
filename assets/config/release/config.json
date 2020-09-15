@@ -37,7 +37,7 @@
     "name": "healthAuthority.name",
     "updated": "2020-05-01",
     "link": "https://nvhealthresponse.nv.gov/covidtrace",
-    "phone_number": "833-625-0591",
+    "phone_number": "833-625-0587",
     "icon": "assets/app_icon.png"
   },
   "test_facilities": {
@@ -282,7 +282,7 @@
   },
   "support": {
     "gps_link": "https://play.google.com/store/apps/details?id=com.google.android.gms",
-    "app_link_ios": "https://g.co/ens",
-    "app_link_android": "https://g.co/ens"
+    "app_link_ios": "https://apps.apple.com/us/app/id1524365131",
+    "app_link_android": "https://play.app.goo.gl/?link=https://play.google.com/store/apps/details?id=gov.nv.dhhs.en"
   }
 }

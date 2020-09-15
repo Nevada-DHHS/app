@@ -18,7 +18,11 @@
   "override": {
     "healthAuthority": {
       "link": "https://nvhealthresponse.nv.gov/covidtrace",
-      "phone_number": "833-625-0591"
+      "phone_number": "833-625-0587"
+    },
+    "support": {
+      "app_link_ios": "https://apps.apple.com/us/app/id1524365131",
+      "app_link_android": "https://play.app.goo.gl/?link=https://play.google.com/store/apps/details?id=gov.nv.dhhs.en"
     }
   }
 }

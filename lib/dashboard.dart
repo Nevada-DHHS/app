@@ -441,6 +441,7 @@ class DashboardState extends State with TickerProviderStateMixin {
                             ],
                           ),
                         ),
+                        SizedBox(width: 5),
                         Material(
                           shape: CircleBorder(),
                           clipBehavior: Clip.antiAlias,
