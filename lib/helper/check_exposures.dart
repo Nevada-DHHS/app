@@ -113,7 +113,14 @@ Future<List<ExposureInfo>> detectExposures(
   // Save all found exposures
   List<ExposureInfo> exposures;
   try {
-    exposures = (await GactPlugin.detectExposures(keyFiles)).toList();
+    await GactPlugin.detectExposures(keyFiles);
+    exposures = (await GactPlugin.getExposureInfo())
+        .where(
+            (info) => info.totalRiskScore >= exposureConfig['minimumRiskScore'])
+        .toList();
+
+    print('Found ${exposures.length} exposure keys that match min risk score');
+
     await Future.wait(exposures.map((e) {
       return ExposureModel(
         date: e.date,
@@ -125,6 +132,9 @@ Future<List<ExposureInfo>> detectExposures(
   } catch (err) {
     print(err);
     return [];
+  } finally {
+    // Cleanup downloaded files
+    await Future.wait(keyFiles.map((file) => File(file.toFilePath()).delete()));
   }
 
   return exposures;
