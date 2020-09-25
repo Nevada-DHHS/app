@@ -10,6 +10,7 @@ import 'package:gact_plugin/gact_plugin.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pool/pool.dart';
 
 bool checkingExposures = false;
 
@@ -55,50 +56,57 @@ Future<List<Uri>> processKeyIndexFile(
 
 Future<List<Uri>> downloadExposureKeyFiles(
     Iterable<String> exportFiles, Directory dir) async {
-  var downloads = await Future.wait(exportFiles.map((object) async {
-    print('Downloading $object');
-    // Download each exported zip file
-    var response = await http.get(object);
-    if (response.statusCode != 200) {
-      print(response.body);
-      return null;
-    }
+  var pool = new Pool(15, timeout: new Duration(seconds: 120));
+  var downloads = await Future.wait(exportFiles.map((object) {
+    return pool.withResource(() async {
+      print('Downloading $object');
+      // Download each exported zip file
+      var response = await http.get(object);
+      if (response.statusCode != 200) {
+        print(response.body);
+        return null;
+      }
 
-    var keyFile = File('${dir.path}/exposures${Uri.parse(object).path}');
-    if (!await keyFile.exists()) {
-      await keyFile.create(recursive: true);
-    }
-    return keyFile.writeAsBytes(response.bodyBytes);
+      var keyFile = File('${dir.path}/exposures${Uri.parse(object).path}');
+      if (!await keyFile.exists()) {
+        await keyFile.create(recursive: true);
+      }
+      return keyFile.writeAsBytes(response.bodyBytes);
+    });
   }));
 
   // Decompress and verify downloads
-  List<List<Uri>> keyFiles = await Future.wait(downloads.map((File file) async {
-    if (Platform.isAndroid) {
-      return [file.uri];
-    }
+  List<List<Uri>> keyFiles = await Future.wait(downloads.map((File file) {
+    return pool.withResource(() async {
+      if (Platform.isAndroid) {
+        return [file.uri];
+      }
 
-    var archive = ZipDecoder().decodeBytes(await file.readAsBytes());
-    var first = archive.files[0];
-    var second = archive.files[1];
+      var archive = ZipDecoder().decodeBytes(await file.readAsBytes());
+      var first = archive.files[0];
+      var second = archive.files[1];
 
-    var bin = first.name == 'export.bin' ? first : second;
-    var sig = first.name == 'export.sig' ? first : second;
+      var bin = first.name == 'export.bin' ? first : second;
+      var sig = first.name == 'export.sig' ? first : second;
 
-    // Save files to disk
-    var binFile = File('${file.path}.bin');
-    var sigFile = File('${file.path}.sig');
+      // Save files to disk
+      var binFile = File('${file.path}.bin');
+      var sigFile = File('${file.path}.sig');
 
-    if (!await binFile.exists()) {
-      await binFile.create(recursive: true);
-    }
-    await binFile.writeAsBytes(bin.content as List<int>);
+      if (!await binFile.exists()) {
+        await binFile.create(recursive: true);
+      }
+      await binFile.writeAsBytes(bin.content as List<int>);
 
-    if (!await sigFile.exists()) {
-      await sigFile.create(recursive: true);
-    }
-    await sigFile.writeAsBytes(sig.content as List<int>);
-    return [binFile.uri, sigFile.uri];
+      if (!await sigFile.exists()) {
+        await sigFile.create(recursive: true);
+      }
+      await sigFile.writeAsBytes(sig.content as List<int>);
+      return [binFile.uri, sigFile.uri];
+    });
   }));
+
+  print('Done decompressing downloaded files');
 
   return keyFiles.expand((files) => files).toList();
 }
@@ -113,10 +121,14 @@ Future<List<ExposureInfo>> detectExposures(
   // Save all found exposures
   List<ExposureInfo> exposures;
   try {
-    await GactPlugin.detectExposures(keyFiles);
+    var minRiskScore = exposureConfig['minimumRiskScore'];
+    var summary = await GactPlugin.detectExposures(keyFiles);
+    if (summary.maximumRiskScore < minRiskScore) {
+      return [];
+    }
+
     exposures = (await GactPlugin.getExposureInfo())
-        .where(
-            (info) => info.totalRiskScore >= exposureConfig['minimumRiskScore'])
+        .where((info) => info.totalRiskScore >= minRiskScore)
         .toList();
 
     print('Found ${exposures.length} exposure keys that match min risk score');

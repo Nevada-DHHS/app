@@ -1,6 +1,6 @@
 {
-  "exposurePublishUrl": "https://exposure-btmqe5w5mq-uc.a.run.app",
-  "exposureKeysIndexUrl": "https://storage.googleapis.com/exposure-notification-export-ioxbu/exposure-keys/index.txt",
+  "exposurePublishUrl": "https://integration.exposurenotification.health/v1alpha1/publish",
+  "exposureKeysIndexUrl": "https://encdn.integration.exposurenotification.health/v1/index.txt",
   "exposureNotificationConfiguration": {
     "minimumRiskScore": 10,
     "attenuationLevelValues": [1, 2, 3, 4, 5, 6, 7, 8],
