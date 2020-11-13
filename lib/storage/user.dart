@@ -12,6 +12,7 @@ class UserModel {
   String lastKeyFile;
   Token token;
   String revisionToken;
+  String deviceId;
 
   UserModel(
       {this.id,
@@ -21,7 +22,8 @@ class UserModel {
       this.lastCheck,
       this.lastKeyFile,
       this.token,
-      this.revisionToken});
+      this.revisionToken,
+      this.deviceId});
 
   static Future<UserModel> find() async {
     final Database db = await Storage.db;
@@ -41,6 +43,7 @@ class UserModel {
       token: Token(
           token: rows[0]['verify_token'],
           refreshToken: rows[0]['refresh_token']),
+      deviceId: rows[0]['device_id'],
     );
   }
 
@@ -58,6 +61,7 @@ class UserModel {
           'verify_token': token != null ? token.token : null,
           'refresh_token': token != null ? token.refreshToken : null,
           'revision_token': lastKeyFile,
+          'device_id': deviceId
         },
         where: 'id = ?',
         whereArgs: [id]);

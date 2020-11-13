@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:covidtrace/config.dart';
+import 'package:covidtrace/state.dart';
 import 'package:flutter_safetynet_attestation/flutter_safetynet_attestation.dart';
 import 'package:gact_plugin/gact_plugin.dart';
+import 'package:google_api_availability/google_api_availability.dart' as ga;
 import 'package:http/http.dart' as http;
 import 'package:package_info/package_info.dart';
 import 'package:uuid/uuid.dart';
@@ -23,32 +25,38 @@ Future<http.Response> report(Map<String, dynamic> postData) async {
     return null;
   }
 
+  var user = AppState.instance.user;
+  var deviceId =
+      user.deviceId ?? DateTime.now().millisecondsSinceEpoch.toString();
+
   // Add deviceCheck or Attestation to payload depending on platform
   if (Platform.isIOS) {
     try {
-      postData['deviceCheck'] = await GactPlugin.deviceCheck;
+      deviceId = await GactPlugin.deviceCheck;
     } catch (err) {
       print('metric deviceCheck error');
       print(err);
     }
+    postData['deviceCheck'] = deviceId;
   }
 
   if (Platform.isAndroid) {
     try {
-      var available =
-          await FlutterSafetynetAttestation.googlePlayServicesAvailability();
-      if (available != GooglePlayServicesAvailability.success) {
+      var available = await ga.GoogleApiAvailability.instance
+          .checkGooglePlayServicesAvailability(false);
+
+      if (available != ga.GooglePlayServicesAvailability.success) {
         return null;
       }
 
       var nonce = Uuid().v4();
-      var jwt =
+      deviceId =
           await FlutterSafetynetAttestation.safetyNetAttestationJwt(nonce);
-      postData['deviceAttestation'] = jwt;
     } catch (err) {
       print('metric attestation error');
       print(err);
     }
+    postData['deviceAttestation'] = deviceId;
   }
 
   postData['version'] = (await PackageInfo.fromPlatform()).version;
@@ -71,6 +79,9 @@ Future<http.Response> report(Map<String, dynamic> postData) async {
     print('Unable to report metric: ${jsonEncode(postData)}');
     print(err);
   }
+
+  user.deviceId = deviceId;
+  await AppState.instance.saveUser(user);
 
   return postResp;
 }

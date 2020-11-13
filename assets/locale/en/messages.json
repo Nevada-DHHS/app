@@ -32,6 +32,10 @@
   "nav.about.share": "Share",
   "status.exposure_disabled.notice.title": "Exposure Notification is OFF",
   "status.exposure_disabled.notice.body": "COVID Trace cannot alert you to potential COVID-19 exposures. Tap here to turn on Exposure Notifications.",
+  "status.background_fetch_disabled.notice.title": "Exposure Notification is OFF",
+  "status.background_fetch_disabled.notice.body": "COVID Trace cannot alert you to potential COVID-19 exposures. Tap here to turn on background data fetch.",
+  "status.bluetooth_disabled.notice.title": "Exposure Notification is OFF",
+  "status.bluetooth_disabled.notice.body": "COVID Trace cannot alert you to potential COVID-19 exposures. Please turn on Bluetooth.",
   "status.non_exposure.notice.title": "No Exposures Found",
   "status.non_exposure.notice.since_day": "In the last day",
   "status.non_exposure.notice.since_days": "In the last $0 days",
@@ -130,5 +134,7 @@
   "errors.too_many_attempts": "Too many attempts. Please wait and try again later",
   "errors.verify_code_failed": "Unable to verify your code",
   "errors.verify_type_unconfirmed": "Only a confirmed positive diagnosis is supported",
-  "errors.no_connection": "Unable to connect to the server"
+  "errors.no_connection": "Unable to connect to the server",
+  "errors.no_teks": "You have no data to submit.",
+  "errors.unknown": "An unknown error occurred."
 }

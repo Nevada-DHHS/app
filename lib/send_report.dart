@@ -48,11 +48,20 @@ class SendReportState extends State<SendReport> with TickerProviderStateMixin {
         CurvedAnimation(parent: expandController, curve: Curves.fastOutSlowIn);
 
     _pinState.addListener(() => onCodeChange(_pinState.pin));
-    Provider.of<AppState>(context, listen: false).addListener(onStateChange);
+    AppState.instance.addListener(onStateChange);
+  }
+
+  void dispose() {
+    super.dispose();
+    AppState.instance.removeListener(onStateChange);
   }
 
   void onStateChange() async {
-    AppState state = Provider.of<AppState>(context, listen: false);
+    if (!mounted) {
+      return;
+    }
+
+    var state = AppState.instance;
     if (state.report != null) {
       expandController.forward();
       setState(() => _expandHeader = true);
@@ -64,12 +73,12 @@ class SendReportState extends State<SendReport> with TickerProviderStateMixin {
     var err = await sendReport(state);
 
     if (err != null) {
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
           content: Text(
               intl.get('report.submit.error', args: [intl.get(err.trim())]))));
-    } else {
-      Scaffold.of(context).showSnackBar(
+    } else if (state.report != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(intl.get('report.submit.success'))));
     }
   }

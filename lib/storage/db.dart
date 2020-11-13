@@ -56,7 +56,12 @@ Map<int, List<String>> migrationScripts = {
     '''
     ALTER TABLE USER add COLUMN revision_token TEXT;
     '''
-  ]
+  ],
+  5: [
+    '''
+    ALTER TABLE USER add COLUMN device_id TEXT;
+    '''
+  ],
 };
 
 Future<void> _runMigrations(db, oldVersion, newVersion) async {
@@ -71,7 +76,7 @@ Future<String> _dataBasePath(String path) async {
 }
 
 Future<Database> _initDatabase() async {
-  return await openDatabase(await _dataBasePath('covidtrace.db'), version: 4,
+  return await openDatabase(await _dataBasePath('covidtrace.db'), version: 5,
       onCreate: (db, version) async {
     initialScript.forEach((script) async => await db.execute(script));
     if (version > 1) {

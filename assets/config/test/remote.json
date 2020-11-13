@@ -12,8 +12,8 @@
     "transmissionRiskLevelValues": [1, 1, 1, 1, 1, 1, 1, 1],
     "transmissionRiskWeight": 1
   },
-  "verifyUrl": "https://apiserver-btmqe5w5mq-uc.a.run.app",
-  "verifyApiKey": "ILeOheqo4ErUB8xJC25hcujN2kPCINHf2rhrcCtyizpOsm7HiLJshOn9wLZdUyYwDVEbrj0DFSExIhPizfxzhg.1.XoG4rPsXFyCJ52rSq51X-U6a33L4t6DMc4mHYZoVGnG7fUTFh2Qv0ZhBTOscu0MCSkpCbOq1USaSx2KEc_93nA",
+  "verifyUrl": "https://apiserver.encv-test.org",
+  "verifyApiKey": "4hO5ztsY5HQtWdS1v1VpEV9pLuy_VkdNaEmddsp4a5lqUPP5vpKHy4g63JcKTi5uAx6Z0Mqssq68XthxIbL8gQ.22.0wu70Oc3dSpfueHow26LMFkOYYwPcW0SCgP_KPGI-4_AVpRc7Q3dWaZMWKNYaT8PXqHFS6cxpc6V4NqglStZVA",
   "metricsPublishUrl": "https://us-west4-covidtrace-nevada-staging.cloudfunctions.net/metric",
   "override": {
     "healthAuthority": {
@@ -21,8 +21,8 @@
       "phone_number": "833-625-0587"
     },
     "support": {
-      "app_link_ios": "https://apps.apple.com/us/app/id1524365131",
-      "app_link_android": "https://play.app.goo.gl/?link=https://play.google.com/store/apps/details?id=gov.nv.dhhs.en"
+      "app_link_ios": "https://covidtrace.com/app",
+      "app_link_android": "https://covidtrace.com/app"
     }
   }
 }

@@ -23,10 +23,19 @@ class Dashboard extends StatefulWidget {
 
 class DashboardState extends State with TickerProviderStateMixin {
   bool _refreshing = false;
+  Timer _refreshTimer;
 
   void initState() {
     super.initState();
     loadConfig();
+    _refreshTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+      AppState.instance.refresh();
+    });
+  }
+
+  void dispose() {
+    super.dispose();
+    _refreshTimer.cancel();
   }
 
   void loadConfig() async {
@@ -39,7 +48,8 @@ class DashboardState extends State with TickerProviderStateMixin {
   Future<void> refreshExposures(AppState state) async {
     await state.checkStatus();
 
-    if (state.status != AuthorizationStatus.Authorized) {
+    if (state.authStatus != AuthorizationStatus.Authorized ||
+        state.exposureStatus != ExposureNotificationStatus.Active) {
       return;
     }
 
@@ -60,7 +70,7 @@ class DashboardState extends State with TickerProviderStateMixin {
 
     if (error != null) {
       var intl = locale.Intl.of(context);
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
           content: Text(intl.get('status.exposure.check.error',
               args: [intl.get(error.trim())]))));
@@ -72,7 +82,17 @@ class DashboardState extends State with TickerProviderStateMixin {
   }
 
   void enableExposureNotifications(AppState state) async {
-    if (state.status == AuthorizationStatus.Unsupported && Platform.isAndroid) {
+    if (!state.bluetoothEnabled) {
+      return;
+    }
+
+    if (state.backgroundFetch) {
+      AppSettings.openAppSettings();
+      return;
+    }
+
+    if (state.authStatus == AuthorizationStatus.Unsupported &&
+        Platform.isAndroid) {
       launch(Config.get()['support']['gps_link']);
       return;
     }
@@ -227,8 +247,18 @@ class DashboardState extends State with TickerProviderStateMixin {
       var textColor = Color(int.parse(theme['not_authorized_text']));
       var alertText = TextStyle(color: textColor);
 
-      var status = state.status;
-      if (status != AuthorizationStatus.Authorized) {
+      var disabledMessage;
+      // Look for possible disable states
+      if (!state.bluetoothEnabled) {
+        disabledMessage = 'bluetooth_disabled';
+      } else if (state.authStatus != AuthorizationStatus.Authorized ||
+          state.exposureStatus != ExposureNotificationStatus.Active) {
+        disabledMessage = 'exposure_disabled';
+      } else if (!state.backgroundFetch) {
+        disabledMessage = 'background_fetch_disabled';
+      }
+
+      if (disabledMessage != null) {
         return Padding(
             padding: EdgeInsets.only(left: 15, right: 15),
             child: RefreshIndicator(
@@ -255,7 +285,7 @@ class DashboardState extends State with TickerProviderStateMixin {
                                       children: [
                                     Text(
                                         intl.get(
-                                            'status.exposure_disabled.notice.title'),
+                                            'status.$disabledMessage.notice.title'),
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline6
@@ -266,7 +296,7 @@ class DashboardState extends State with TickerProviderStateMixin {
                             ],
                           ),
                           Divider(height: 20, color: textColor),
-                          Text(intl.get('status.exposure_disabled.notice.body'),
+                          Text(intl.get('status.$disabledMessage.notice.body'),
                               style: alertText)
                         ],
                       ),

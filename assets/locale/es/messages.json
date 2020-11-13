@@ -32,6 +32,10 @@
   "nav.about.share": "Compartir",
   "status.exposure_disabled.notice.title": "La notificaciÓn de exposición está desactivada (OFF).",
   "status.exposure_disabled.notice.body": "COVID Trace no puede alertarlo sobre posibles exposiciones a la COVID-19. Pulse aqu¡ para activar las notificaciones de exposición.",
+  "status.background_fetch_disabled.notice.title": "La notificaciÓn de exposición está desactivada (OFF).",
+  "status.background_fetch_disabled.notice.body": "COVID Trace no puede alertarlo sobre posibles exposiciones a la COVID-19. Pulse aquí para activar la recuperación de datos en segundo plano.",
+  "status.bluetooth_disabled.notice.title": "La notificaciÓn de exposición está desactivada (OFF).",
+  "status.bluetooth_disabled.notice.body": "COVID Trace no puede alertarlo sobre posibles exposiciones a la COVID-19. Encienda Bluetooth.",
   "status.non_exposure.notice.title": "No se encontraron exposiciones",
   "status.non_exposure.notice.since_day": "En el último día",
   "status.non_exposure.notice.since_days": "En los últimos $0 días",
@@ -130,5 +134,7 @@
   "errors.too_many_attempts": "Demasiados intentos. Por favor espere e intentelo otra vez",
   "errors.verify_code_failed": "No se puede verificar su código.",
   "errors.verify_type_unconfirmed": "Solo se admite un diagnóstico positivo confirmado.",
-  "errors.no_connection": "No es posible conectarse al servidor"
+  "errors.no_connection": "No es posible conectarse al servidor",
+  "errors.no_teks": "No tienes datos para enviar.",
+  "errors.unknown": "Un error desconocido ocurrió."
 }

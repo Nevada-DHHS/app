@@ -1,8 +1,8 @@
 {
-  "exposurePublishUrl": "https://exposure-5v7v5qboea-uc.a.run.app",
+  "exposurePublishUrl": "https://prod.exposurenotification.health",
   "exposureKeysPublishedBucket": "exposure-notification-export-cpmxr",
   "exposureKeysPublishedIndexFile": "exposure-keys/index.txt",
-  "exposureKeysIndexUrl": "https://storage.googleapis.com/exposure-notification-export-cpmxr/exposure-keys/index.txt",
+  "exposureKeysIndexUrl": "https://encdn.prod.exposurenotification.health/v1/index.txt",
   "exposureNotificationConfiguration": {
     "minimumRiskScore": 10,
     "attenuationLevelValues": [1, 2, 3, 4, 5, 6, 7, 8],
@@ -23,8 +23,8 @@
       "phone_number": "833-625-0587"
     },
     "support": {
-      "app_link_ios": "https://apps.apple.com/us/app/id1524365131",
-      "app_link_android": "https://play.app.goo.gl/?link=https://play.google.com/store/apps/details?id=gov.nv.dhhs.en"
+      "app_link_ios": "https://covidtrace.com/app",
+      "app_link_android": "https://covidtrace.com/app"
     }
   }
 }

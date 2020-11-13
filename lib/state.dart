@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:background_fetch/background_fetch.dart';
 import 'package:covidtrace/config.dart';
 import 'package:covidtrace/helper/check_exposures.dart' as bg;
 import 'package:covidtrace/helper/metrics.dart' as metrics;
@@ -29,7 +30,9 @@ class AppState with ChangeNotifier {
   static ReportModel _report;
   static bool _ready = false;
   static ExposureModel _exposure;
-  static AuthorizationStatus _status;
+  static AuthorizationStatus _authStatus;
+  static ExposureNotificationStatus _status;
+  static int _bgStatus;
 
   AppState() {
     initState();
@@ -42,7 +45,7 @@ class AppState with ChangeNotifier {
     _user = await UserModel.find();
     _report = await ReportModel.findLatest();
     _exposure = await getExposure();
-    _status = await checkStatus();
+    await checkStatus();
     _ready = true;
 
     if (_user.firstRun) {
@@ -60,15 +63,20 @@ class AppState with ChangeNotifier {
 
   UserModel get user => _user;
 
-  AuthorizationStatus get status => _status;
+  AuthorizationStatus get authStatus => _authStatus;
+
+  ExposureNotificationStatus get exposureStatus => _status;
+
+  bool get backgroundFetch => _bgStatus == BackgroundFetch.STATUS_AVAILABLE;
+
+  bool get bluetoothEnabled =>
+      _status != ExposureNotificationStatus.BluetoothOff;
 
   Future<void> refresh() async {
-    print('refreshing app state');
-
     _user = await UserModel.find();
     _report = await ReportModel.findLatest();
     _exposure = await getExposure();
-    _status = await checkStatus();
+    await checkStatus();
 
     notifyListeners();
   }
@@ -84,14 +92,23 @@ class AppState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<AuthorizationStatus> checkStatus() async {
-    _status = await GactPlugin.authorizationStatus;
+  Future<void> checkStatus() async {
+    _authStatus = await GactPlugin.authorizationStatus;
+    _status = await GactPlugin.exposureNotificationStatus;
+    _bgStatus = await BackgroundFetch.status;
+
     notifyListeners();
-    return _status;
+    return _authStatus;
   }
 
   Future<ExposureModel> checkExposures() async {
-    await bg.checkExposures(background: false);
+    try {
+      await bg.checkExposures(background: false);
+    } catch (err) {
+      print('Error checking exposures');
+      print(err);
+    }
+
     _user = await UserModel.find();
     _exposure = await getExposure();
     notifyListeners();
@@ -180,10 +197,11 @@ class AppState with ChangeNotifier {
     var success = false;
     var config = await Config.remote();
 
-    List<ExposureKey> keys =
-        await sendExposureKeys(config, verificationCode) ?? [];
+    List<ExposureKey> keys = await sendExposureKeys(config, verificationCode);
 
-    if (keys.isNotEmpty) {
+    if (keys == null) {
+      throw ('errors.unknown');
+    } else if (keys.isNotEmpty) {
       _report = ReportModel(
           lastExposureKey: keys.last.keyData, timestamp: DateTime.now());
       await report.create();
@@ -194,6 +212,10 @@ class AppState with ChangeNotifier {
 
     if (success) {
       metrics.notify();
+    }
+
+    if (keys.isEmpty) {
+      throw ('errors.no_teks');
     }
 
     return success;

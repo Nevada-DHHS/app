@@ -14,6 +14,8 @@ import 'package:pool/pool.dart';
 
 bool checkingExposures = false;
 
+const MAX_EXPORT_FILES = 50;
+
 Future<List<Uri>> processKeyIndexFile(
   String url,
   Directory dir,
@@ -32,7 +34,13 @@ Future<List<Uri>> processKeyIndexFile(
   // should fetch everything in the index.
   var exportFiles = indexFile.body
       .split('\n')
-      .where((name) => name.compareTo(lastKeyFile) > 0);
+      .where((name) => name.compareTo(lastKeyFile) > 0)
+      .toList();
+
+  // Download max files at a time to make sure background task has time to finish
+  if (exportFiles.length > MAX_EXPORT_FILES) {
+    exportFiles = exportFiles.sublist(0, MAX_EXPORT_FILES);
+  }
 
   if (exportFiles.isEmpty) {
     print('No new keys to check!');
@@ -153,6 +161,11 @@ Future<List<ExposureInfo>> detectExposures(
 }
 
 Future<ExposureInfo> checkExposures({bool background = true}) async {
+  var status = await GactPlugin.authorizationStatus;
+  if (status != AuthorizationStatus.Authorized) {
+    return null;
+  }
+
   if (checkingExposures) {
     return null;
   }
@@ -194,8 +207,13 @@ Future<ExposureInfo> checkExposures({bool background = true}) async {
 
   List<ExposureInfo> exposures = [];
   if (keyFiles.isNotEmpty) {
-    exposures = await detectExposures(
-        keyFiles, config['exposureNotificationConfiguration']);
+    try {
+      exposures = await detectExposures(
+          keyFiles, config['exposureNotificationConfiguration']);
+    } catch (err) {
+      print('error detecting exposuers');
+      print(err);
+    }
   }
 
   user.lastCheck = now;

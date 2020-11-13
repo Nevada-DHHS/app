@@ -154,9 +154,10 @@ class OnboardingState extends State {
                       controller: _pageController,
                       physics: NeverScrollableScrollPhysics(),
                       children: [
-                        if (state.status == AuthorizationStatus.Unsupported &&
+                        if (state.authStatus ==
+                                AuthorizationStatus.Unsupported &&
                             Platform.isAndroid)
-                          Stack(overflow: Overflow.visible, children: [
+                          Stack(clipBehavior: Clip.antiAlias, children: [
                             SingleChildScrollView(
                                 physics: AlwaysScrollableScrollPhysics(),
                                 child: Column(
@@ -206,7 +207,7 @@ class OnboardingState extends State {
                               ]),
                             ),
                           ]),
-                        Stack(overflow: Overflow.visible, children: [
+                        Stack(clipBehavior: Clip.antiAlias, children: [
                           SingleChildScrollView(
                               physics: AlwaysScrollableScrollPhysics(),
                               child: Column(
@@ -247,7 +248,7 @@ class OnboardingState extends State {
                           ),
                         ]),
                         Stack(
-                          overflow: Overflow.visible,
+                          clipBehavior: Clip.antiAlias,
                           children: [
                             SingleChildScrollView(
                               physics: AlwaysScrollableScrollPhysics(),
@@ -326,7 +327,7 @@ class OnboardingState extends State {
                             ),
                           ],
                         ),
-                        Stack(overflow: Overflow.visible, children: [
+                        Stack(clipBehavior: Clip.antiAlias, children: [
                           SingleChildScrollView(
                               physics: AlwaysScrollableScrollPhysics(),
                               child: Column(
@@ -384,7 +385,7 @@ class OnboardingState extends State {
                                       config['exposure_notification']['cta']),
                                   onPressed: () => requestPermission())),
                         ]),
-                        Stack(overflow: Overflow.visible, children: [
+                        Stack(clipBehavior: Clip.antiAlias, children: [
                           SingleChildScrollView(
                               physics: AlwaysScrollableScrollPhysics(),
                               child: Column(

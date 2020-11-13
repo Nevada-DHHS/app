@@ -20,19 +20,27 @@ import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:workmanager/workmanager.dart' as wm;
+
+void workManagerDispatcher() {
+  wm.Workmanager.executeTask((taskName, inputData) async {
+    await checkExposures();
+    return Future.value(true);
+  });
+}
 
 void main() async {
   await Config.load();
 
-  GactPlugin.setup();
-
   runApp(ChangeNotifierProvider(
       create: (context) => AppState.instance, child: CovidTraceApp()));
 
-  BackgroundFetch.registerHeadlessTask((String id) async {
-    await checkExposures();
-    BackgroundFetch.finish(id);
-  });
+  if (Platform.isAndroid) {
+    wm.Workmanager.initialize(workManagerDispatcher,
+        isInDebugMode: !kReleaseMode);
+    wm.Workmanager.registerPeriodicTask("1", "check_exposures",
+        frequency: kReleaseMode ? Duration(hours: 4) : Duration(minutes: 15));
+  }
 
   var notificationPlugin = FlutterLocalNotificationsPlugin();
   notificationPlugin.initialize(
@@ -106,26 +114,27 @@ class MainPageState extends State<MainPage> {
     var packageName = (await PackageInfo.fromPlatform()).packageName;
     var enTaskID = '$packageName.exposure-notification';
 
-    await BackgroundFetch.configure(
-        BackgroundFetchConfig(
-          enableHeadless: true,
-          minimumFetchInterval: (kReleaseMode ? 120 : 15),
-          requiredNetworkType: NetworkType.ANY,
-          requiresBatteryNotLow: true,
-          requiresCharging: false,
-          requiresDeviceIdle: false,
-          requiresStorageNotLow: true,
-          startOnBoot: true,
-          stopOnTerminate: false,
-        ), (String taskId) async {
-      await checkExposures();
-      BackgroundFetch.finish(taskId);
-    });
+    if (Platform.isIOS) {
+      await BackgroundFetch.configure(
+          BackgroundFetchConfig(
+            minimumFetchInterval: (kReleaseMode ? 120 : 15),
+            requiredNetworkType: NetworkType.ANY,
+            requiresBatteryNotLow: true,
+            requiresCharging: false,
+            requiresDeviceIdle: false,
+            requiresStorageNotLow: true,
+            startOnBoot: true,
+            stopOnTerminate: false,
+          ), (String taskId) async {
+        await checkExposures();
+        BackgroundFetch.finish(taskId);
+      });
 
-    await BackgroundFetch.scheduleTask(TaskConfig(
-        taskId: enTaskID,
-        delay: 1000 * 60 * (kReleaseMode ? 120 : 15),
-        periodic: true));
+      await BackgroundFetch.scheduleTask(TaskConfig(
+          taskId: enTaskID,
+          delay: 1000 * 60 * (kReleaseMode ? 120 : 15),
+          periodic: true));
+    }
   }
 
   @override
