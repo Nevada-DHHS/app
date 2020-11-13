@@ -26,8 +26,20 @@ class Config {
         'assets/config/${kReleaseMode ? 'release' : 'test'}/config.json');
     _local = jsonDecode(source);
 
+    var config;
     try {
-      remote();
+      config = await remote();
+      // Merge overrides
+      if (config.containsKey('override')) {
+        var override = config['override'] as Map<String, dynamic>;
+        override.forEach((key, value) {
+          if (value is Map) {
+            (_local[key] as Map).addAll(value);
+          } else {
+            _local[key] = value;
+          }
+        });
+      }
     } catch (err) {
       print('Unable to load remote config');
       print(err);
@@ -78,18 +90,6 @@ class Config {
     } catch (err) {
       print('Error saving remote config to disk');
       print(err);
-    }
-
-    // Merge overrides
-    if (config.containsKey('override')) {
-      var override = config['override'] as Map<String, dynamic>;
-      override.forEach((key, value) {
-        if (value is Map) {
-          (_local[key] as Map).addAll(value);
-        } else {
-          _local[key] = value;
-        }
-      });
     }
 
     return config;

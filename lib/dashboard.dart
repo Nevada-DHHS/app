@@ -86,7 +86,7 @@ class DashboardState extends State with TickerProviderStateMixin {
       return;
     }
 
-    if (state.backgroundFetch) {
+    if (!state.backgroundFetch) {
       AppSettings.openAppSettings();
       return;
     }
