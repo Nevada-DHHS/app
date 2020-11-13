@@ -34,6 +34,7 @@ dependencies:
   gact_plugin:
     git:
       url: git@github.com:covidtrace/contact_trace_plugin.git
+  google_api_availability: ^2.0.4
   http:
   intl:
   jaguar_jwt: ^2.1.6
