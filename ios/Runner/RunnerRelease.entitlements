@@ -6,5 +6,10 @@
 	<string>development</string>
 	<key>com.apple.developer.exposure-notification</key>
 	<true/>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:us-nv.en.express</string>
+		<string>applinks:covidtrace.com</string>
+	</array>
 </dict>
 </plist>

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:animations/animations.dart';
@@ -19,6 +20,7 @@ import 'package:gact_plugin/gact_plugin.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
+import 'package:uni_links/uni_links.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:workmanager/workmanager.dart' as wm;
 
@@ -106,6 +108,8 @@ class MainPage extends StatefulWidget {
 
 class MainPageState extends State<MainPage> {
   int _navIndex = 0;
+  StreamSubscription _linkSub;
+  Uri _initUri;
 
   Future<void> initBackgroundFetch() async {
     /// This Task ID must match the bundle ID that has the granted entitlements
@@ -145,9 +149,41 @@ class MainPageState extends State<MainPage> {
     }
 
     initBackgroundFetch();
+    initUrlLink();
     NotificationState.instance.addListener(() {
       // Goto exposure tab
       onBottomNavTap(0);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (_linkSub != null) {
+      _linkSub.cancel();
+    }
+  }
+
+  void initUrlLink() async {
+    var initUri = await getInitialUri();
+    if (initUri != null) {
+      setState(() {
+        _initUri = initUri;
+      });
+      onBottomNavTap(1);
+    }
+    // Subscribe to link changes
+    // ignore: cancel_subscriptions
+    var sub = getUriLinksStream().listen((Uri uri) {
+      setState(() {
+        _initUri = uri;
+      });
+      onBottomNavTap(1);
+    }, onError: (err) {
+      print(err);
+    });
+    setState(() {
+      _linkSub = sub;
     });
   }
 
@@ -215,6 +251,10 @@ class MainPageState extends State<MainPage> {
 
     setState(() {
       _navIndex = index;
+
+      if (index != 1) {
+        _initUri = null;
+      }
     });
   }
 
@@ -322,7 +362,8 @@ class MainPageState extends State<MainPage> {
                     secondaryAnimation: secondaryAnimation,
                   );
                 },
-                child: _navIndex == 0 ? Dashboard() : SendReport(),
+                child:
+                    _navIndex == 0 ? Dashboard() : SendReport(code: _initUri),
               ),
             ));
   }

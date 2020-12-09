@@ -44,7 +44,8 @@ class CodePinState extends State<CodePin> {
   void didUpdateWidget(oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.size != oldWidget.size) {
+    if (widget.size != oldWidget.size ||
+        widget.pinState != oldWidget.pinState) {
       createFocusAndControllers();
     }
   }
@@ -61,10 +62,13 @@ class CodePinState extends State<CodePin> {
     // List<ChangeNotifier> dispose = [..._focusNodes, ..._controllers];
 
     setState(() {
-      var size = widget.size;
-      _values = List.generate(size, (_) => '');
+      var code = widget.pinState.pin;
+      var size = code != null ? code.length : widget.size;
+
+      _values = List.generate(size, (i) => code != null ? code[i] : '');
       _focusNodes = List.generate(size, (_) => FocusNode());
-      _controllers = List.generate(size, (_) => TextEditingController());
+      _controllers = List.generate(size,
+          (i) => new TextEditingController(text: code != null ? code[i] : ''));
       _controllers.asMap().forEach(
           (index, c) => c.addListener(() => onControllerChange(index)));
     });
@@ -74,11 +78,11 @@ class CodePinState extends State<CodePin> {
     // dispose.forEach((item) => item.dispose());
   }
 
-  Widget createCodeField(context, index) {
+  Widget createCodeField(context, index, textStyle) {
     return Theme(
       data: Theme.of(context).copyWith(textSelectionColor: Colors.transparent),
       child: TextField(
-        style: Theme.of(context).textTheme.headline5,
+        style: textStyle,
         showCursor: false,
         enableInteractiveSelection: false,
         maxLength: 1,
@@ -145,10 +149,14 @@ class CodePinState extends State<CodePin> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ...List.generate(widget.size, (index) {
+            var large = widget.size <= 8;
+            var theme = Theme.of(context).textTheme;
+
             return [
               Flexible(
-                flex: widget.flex,
-                child: createCodeField(context, index),
+                flex: large ? 3 : 5,
+                child: createCodeField(
+                    context, index, large ? theme.headline5 : theme.headline6),
               ),
               Spacer(flex: 1),
             ];

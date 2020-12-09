@@ -1,17 +1,24 @@
+import 'dart:async';
 import 'package:covidtrace/code_pin.dart';
 import 'package:covidtrace/config.dart';
 import 'package:covidtrace/info_card.dart';
 import 'package:covidtrace/intl.dart' as locale;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:uni_links/uni_links.dart';
 import 'state.dart';
 
 class PinState extends ChangeNotifier {
   String _pin;
 
   String get pin => _pin;
+
+  PinState({String pin})
+      : _pin = pin,
+        super();
 
   void onChange(String value) {
     _pin = value;
@@ -25,7 +32,9 @@ class PinState extends ChangeNotifier {
 }
 
 class SendReport extends StatefulWidget {
-  SendReport({Key key}) : super(key: key);
+  final Uri code;
+
+  SendReport({Key key, this.code}) : super(key: key);
 
   @override
   SendReportState createState() => SendReportState();
@@ -35,8 +44,10 @@ class SendReportState extends State<SendReport> with TickerProviderStateMixin {
   var _loading = false;
   var _step = 0;
   var _verificationCode = '';
+  var _pinSize = 8;
   bool _expandHeader = false;
-  var _pinState = PinState();
+  PinState _pinState;
+  StreamSubscription _linkSub;
   AnimationController expandController;
   CurvedAnimation animation;
 
@@ -47,13 +58,47 @@ class SendReportState extends State<SendReport> with TickerProviderStateMixin {
     animation =
         CurvedAnimation(parent: expandController, curve: Curves.fastOutSlowIn);
 
+    String initPin;
+    if (widget.code != null) {
+      initPin = widget.code.queryParameters['c'];
+      setState(() {
+        _verificationCode = initPin;
+        _pinSize = initPin.length;
+      });
+    }
+
+    _pinState = PinState(pin: initPin);
     _pinState.addListener(() => onCodeChange(_pinState.pin));
     AppState.instance.addListener(onStateChange);
+
+    initUrlLink();
+  }
+
+  void initUrlLink() async {
+    // Subscribe to link changes
+    // ignore: cancel_subscriptions
+    var sub = getUriLinksStream().listen((Uri uri) {
+      setState(() {
+        String initPin = uri.queryParameters['c'];
+        _verificationCode = initPin;
+        _pinSize = initPin.length;
+        _pinState = PinState(pin: initPin);
+        _pinState.addListener(() => onCodeChange(_pinState.pin));
+      });
+    }, onError: (err) {
+      print(err);
+    });
+    setState(() {
+      _linkSub = sub;
+    });
   }
 
   void dispose() {
     super.dispose();
     AppState.instance.removeListener(onStateChange);
+    if (_linkSub != null) {
+      _linkSub.cancel();
+    }
   }
 
   void onStateChange() async {
@@ -106,7 +151,7 @@ class SendReportState extends State<SendReport> with TickerProviderStateMixin {
     }
   }
 
-  bool get codeComplete => _verificationCode.length == 8;
+  bool get codeComplete => _verificationCode.length == _pinSize;
 
   List<Widget> getHeading(String title) {
     var textTheme = Theme.of(context).textTheme;
@@ -279,7 +324,10 @@ class SendReportState extends State<SendReport> with TickerProviderStateMixin {
                                 children: [
                                   Text(intl.get('report.submit.steps_2.body'),
                                       style: stepTextTheme),
-                                  CodePin(size: 8, pinState: _pinState),
+                                  CodePin(
+                                    size: _pinSize,
+                                    pinState: _pinState,
+                                  ),
                                   SizedBox(height: 10),
                                   ButtonBar(
                                       alignment: MainAxisAlignment.start,
