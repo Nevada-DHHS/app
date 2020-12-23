@@ -33,7 +33,7 @@
 	<key>ENAPIVersion</key>
 	<string>1</string>
 	<key>ENDeveloperRegion</key>
-	<string>US-NV</string>
+	<string>US-NV2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
