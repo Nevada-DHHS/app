@@ -11,10 +11,14 @@ description: Digital Contact Tracing for COVID-19
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.2.15+45
+version: 1.2.16+46
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: '>=2.6.0 <3.0.0'
+
+analyzer:
+  enable-experiment:
+    - non-nullable
 
 dependencies:
   flutter:
@@ -30,7 +34,7 @@ dependencies:
   flutter_local_notifications: ^1.4.4+4
   flutter_markdown: ^0.4.3
   flutter_safetynet_attestation: ^0.1.0
-  flutter_sticky_header: "^0.4.2"
+  flutter_sticky_header: '^0.4.2'
   gact_plugin:
     git:
       url: git@github.com:covidtrace/contact_trace_plugin.git
@@ -38,7 +42,7 @@ dependencies:
   http:
   intl:
   jaguar_jwt: ^2.1.6
-  package_info: ">=0.4.0+18 <2.0.0"
+  package_info: '>=0.4.0+18 <2.0.0'
   path:
   path_provider: ^1.6.5
   pool: ^1.4.0
@@ -62,14 +66,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   e2e: ^0.2.1
-  flutter_launcher_icons: "^0.7.4"
+  flutter_launcher_icons: '^0.7.4'
 
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/app_icon.png"
-  adaptive_icon_background: "assets/android/background.png"
-  adaptive_icon_foreground: "assets/android/foreground.png"
+  image_path: 'assets/app_icon.png'
+  adaptive_icon_background: 'assets/android/background.png'
+  adaptive_icon_foreground: 'assets/android/foreground.png'
 
 flutter:
   uses-material-design: true

@@ -1,5 +1,5 @@
 {
-  "exposurePublishUrl": "https://integration.exposurenotification.health/v1alpha1/publish",
+  "exposurePublishUrl": "https://integration.exposurenotification.health",
   "exposureKeysIndexUrl": "https://encdn.integration.exposurenotification.health/v1/index.txt",
   "exposureNotificationConfiguration": {
     "minimumRiskScore": 10,
